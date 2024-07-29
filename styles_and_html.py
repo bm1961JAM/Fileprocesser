@@ -44,13 +44,14 @@ def get_page_bg_and_logo_styles():
     transform-origin: top left; 
     }}
 
-    /* Set background color for tabs and other elements */
+    /* Set no background color for tabs and white text color */
     .css-1l7r3cz {{
-        background-color: black;
+        background-color: transparent;
+        color: white;
     }}
 
     .css-1d391kg {{
-        background-color: black;
+        background-color: transparent;
         color: white;
     }}
     </style>
