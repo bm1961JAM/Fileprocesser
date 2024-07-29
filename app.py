@@ -12,7 +12,6 @@ import bcrypt
 import base64
 from styles_and_html import get_page_bg_and_logo_styles
 
-
 api_key = st.secrets["general"]["OPENAI_API_KEY"]
 if not api_key:
     st.error("API key not found. Please set the OPENAI_API_KEY environment variable.")
@@ -62,12 +61,10 @@ output_folder = os.path.join("processed", "output_files")
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-
 if 'user_data' not in st.session_state:
     st.session_state['user_data'] = {'usernames': [], 'passwords': []}
 
 def add_user():
-
     predefined_users = {
         "bm1961": "Charlotte-182",
         "sam2": "54321"
@@ -77,9 +74,6 @@ def add_user():
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         st.session_state['user_data']['usernames'].append(username)
         st.session_state['user_data']['passwords'].append(hashed_password)
-    
-
-
 
 # Get the styles and HTML for the background and logo
 page_bg_img, logo_html = get_page_bg_and_logo_styles()
@@ -89,33 +83,29 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 st.markdown(logo_html, unsafe_allow_html=True)
 st.markdown("""
 <style>
-
-	.stTabs [data-baseweb="tab-list"] {
-		gap: 6px;
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 6px;
     }
-
-	.stTabs [data-baseweb="tab"] {
-		height: 40px;
+    .stTabs [data-baseweb="tab"] {
+        height: 40px;
         white-space: pre-wrap;
-		background-color: #000000;
-		border-radius: 2px 2px 2px 2px;
-		gap: 6px;
-		padding-top: 15px;
-		padding-bottom: 15px;
+        background-color: transparent;
+        border-radius: 2px 2px 2px 2px;
+        gap: 6px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        color: white;
     }
-
-	.stTabs [aria-selected="true"] {
-  		background-color: #000000;
-	}
-
+    .stTabs [aria-selected="true"] {
+        background-color: transparent;
+        color: white;
+    }
 </style>""", unsafe_allow_html=True)
 
 def main():
-
-    
     st.title("Document Analysis and Processing")
     # Tabs: Upload documents and specify company name, Run GPT Tasks, Upload CSV Files, Download Specific Outputs, Upload Pillar Page
-    tab1, tab2, tab3, tab4, tab5 ,tab6= st.tabs(["Upload Documents", "Run GPT Tasks", "Upload CSV Files", "Download Specific Outputs", "Upload Pillar Page","Download all files"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Upload Documents", "Run GPT Tasks", "Upload CSV Files", "Download Specific Outputs", "Upload Pillar Page", "Download all files"])
 
     with tab1:
         st.header("Upload Documents")
@@ -155,7 +145,6 @@ def main():
             else:
                 st.error("Please specify the company name.")
 
-
     with tab2:
         st.header("Run GPT Tasks")
 
@@ -171,7 +160,7 @@ def main():
                         st.error(f"File {file_name} not found. Please upload it in the first tab.")
                         all_files_present = False
                         break
-                
+
                 if all_files_present:
                     # Separate document texts
                     product_list_text = document_contents.get("product_list.pdf", "")
@@ -179,49 +168,49 @@ def main():
                     key_stats_text = document_contents.get("key_stats.pdf", "")
                     about_us_text = document_contents.get("about_us.pdf", "")
                     colour_scheme_text = document_contents.get("colour_scheme.pdf", "")
-                    
+
                     # 1. Buyer Persona
                     prompt_buyer_persona = prompts["prompt_buyer_persona"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text)
                     buyer_persona = run_gpt_task(instructions["buyer_persona"], prompt_buyer_persona)
                     with open(os.path.join("processed", f"{company_name}_buyer_persona.txt"), "w") as f:
                         f.write(buyer_persona)
-                    
+
                     # 2. English Editor for Buyer Persona
                     prompt_english_editor = prompts["prompt_english_editor"].format(file_name=f"{company_name}_buyer_persona.txt", file_content=buyer_persona)
                     english_editor_output = run_gpt_task(instructions["english_editor"], prompt_english_editor)
                     with open(os.path.join("processed", f"{company_name}_buyer_persona.txt"), "w") as f:
                         f.write(english_editor_output)
-                    
+
                     # 3. Mission Statement
                     prompt_mission_statement = prompts["prompt_mission_statement"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona)
                     mission_values = run_gpt_task(instructions["mission_statement"], prompt_mission_statement)
                     with open(os.path.join("processed", f"{company_name}_mission_values.txt"), "w") as f:
                         f.write(mission_values)
-                    
+
                     # 4. English Editor for Mission Values
                     prompt_english_editor_mission = prompts["prompt_english_editor"].format(file_name=f"{company_name}_mission_values.txt", file_content=mission_values)
                     english_editor_mission_output = run_gpt_task(instructions["english_editor"], prompt_english_editor_mission)
                     with open(os.path.join("processed", f"{company_name}_mission_values.txt"), "w") as f:
                         f.write(english_editor_mission_output)
-                    
+
                     # 5. SEO Summarizer
                     prompt_seo_summarizer = prompts["prompt_seo_summarizer"].format(product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona)
                     seo_summarizer_output = run_gpt_task(instructions["seo_summarizer"], prompt_seo_summarizer)
                     with open(os.path.join("processed", f"{company_name}_seo_summarizer.txt"), "w") as f:
                         f.write(seo_summarizer_output)
-                    
+
                     # 6. English Editor for SEO Summarizer
                     prompt_english_editor_seo = prompts["prompt_english_editor"].format(file_name=f"{company_name}_seo_summarizer.txt", file_content=seo_summarizer_output)
                     english_editor_seo_output = run_gpt_task(instructions["english_editor"], prompt_english_editor_seo)
                     with open(os.path.join("processed", f"{company_name}_seo_summarizer.txt"), "w") as f:
                         f.write(english_editor_seo_output)
-                    
+
                     # 7. SEO Keywords
                     prompt_magic_words = prompts["prompt_magic_words"].format(english_editor_seo_output=english_editor_seo_output)
                     seo_keywords = run_gpt_task(instructions["magic_words"], prompt_magic_words)
                     with open(os.path.join("processed", f"{company_name}_seo_keywords.txt"), "w") as f:
                         f.write(seo_keywords)
-                    
+
                     # Zip the specific output files for download
                     with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_tab2.zip"), "w") as zipf:
                         zipf.write(os.path.join("processed", f"{company_name}_buyer_persona.txt"), f"{company_name}_buyer_persona.txt")
@@ -235,12 +224,11 @@ def main():
             else:
                 st.error("Please specify the company name in the first tab.")
 
-
     with tab3:
         st.header("Upload CSV Files")
-        
+
         csv_files = st.file_uploader("Upload CSV files", type="csv", accept_multiple_files=True)
-        
+
         if csv_files and st.button("Process CSV Files"):
             if company_name:
                 csv_file_paths = []
@@ -249,7 +237,7 @@ def main():
                     with open(file_path, "wb") as f:
                         f.write(file.getbuffer())
                     csv_file_paths.append(file_path)
-                
+
                 if csv_file_paths:
                     # Load the CSV files
                     dataframes = []
@@ -303,11 +291,9 @@ def main():
             else:
                 st.error("Please specify the company name in the first tab.")
 
-            
-
     with tab4:
         st.header("Download Specific Outputs")
-        
+
         if st.button("Run Topic Cluster and Web Page Tasks"):
             if company_name:
                 document_contents = {}
@@ -315,7 +301,7 @@ def main():
                     file_path = os.path.join("uploads", f"{company_name}_{file_name}")
                     if os.path.exists(file_path):
                         document_contents[file_name] = read_pdf(file_path)
-                
+
                 product_list_text = document_contents.get("product_list.pdf", "")
                 USP_text = document_contents.get("USP.pdf", "")
                 key_stats_text = document_contents.get("key_stats.pdf", "")
@@ -349,20 +335,20 @@ def main():
                 brand_voice = run_gpt_task(instructions["brand_voice"], prompt_brand_voice)
                 with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
                     f.write(brand_voice)
-                
+
                 prompt_english_editor_brand = prompts["prompt_english_editor"].format(file_name=f"{company_name}_brand_voice.txt", file_content=brand_voice)
                 english_editor_brand_output = run_gpt_task(instructions["english_editor"], prompt_english_editor_brand)
                 with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
                     f.write(english_editor_brand_output)
-                
+
                 prompt_extract_home_page = prompts["prompt_extract_home_page"].format(website_structure_document=website_structure_document)
                 home_page_structure = run_gpt_task(instructions["editor"], prompt_extract_home_page)
-                
+
                 with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "r") as f:
                     brand_voice_text = f.read()
                 with open(os.path.join("processed", f"{company_name}_keywords.txt"), "r") as f:
                     keywords = f.read()
-                    
+
                 prompt_home_page = prompts["prompt_home_page"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, brand_voice_text=brand_voice_text, keywords=keywords)
                 home_page_document = run_gpt_task(instructions["home_page"], prompt_home_page)
                 with open(os.path.join("processed", f"{company_name}_home_page.txt"), "w") as f:
@@ -396,24 +382,23 @@ def main():
                     zipf.write(os.path.join("processed", f"{company_name}_home_page_final.txt"), f"{company_name}_home_page_final.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_about_us.txt"), f"{company_name}_about_us.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_about_us_final.txt"), f"{company_name}_about_us_final.txt")
-                
+
                 st.success("Specific outputs have been processed!")
                 # with open(os.path.join("processed", f"{company_name}_specific_outputs_tab4.zip"), "rb") as f:
                 #     st.download_button("Download Specific Outputs", f, file_name=f"{company_name}_specific_outputs_tab4.zip")
             else:
                 st.error("Please specify the company name in the first tab.")
 
-
     with tab5:
         st.header("Upload Pillar Page")
-        
+
         pillar_page_file = st.file_uploader("Upload a Pillar Page PDF", type="pdf")
-        
+
         if pillar_page_file:
             pillar_page_path = os.path.join("uploads", f"{company_name}_pillar_page.pdf")
             with open(pillar_page_path, "wb") as f:
                 f.write(pillar_page_file.getbuffer())
-            
+
             pillar_page_content = read_pdf(pillar_page_path)
 
         if st.button("Process Pillar Page"):
@@ -424,14 +409,14 @@ def main():
                     file_path = os.path.join("uploads", f"{company_name}_{file_name}")
                     if os.path.exists(file_path):
                         document_contents[file_name] = read_pdf(file_path)
-                        
+
                 # Separate document texts
                 product_list_text = document_contents.get("product_list.pdf", "")
                 USP_text = document_contents.get("USP.pdf", "")
                 key_stats_text = document_contents.get("key_stats.pdf", "")
                 about_us_text = document_contents.get("about_us.pdf", "")
                 colour_scheme_text = document_contents.get("colour_scheme.pdf", "")
-                
+
                 # Read the existing files
                 with open(os.path.join("processed", f"{company_name}_buyer_persona.txt"), "r") as f:
                     buyer_persona = f.read()
@@ -443,7 +428,7 @@ def main():
                     brand_voice = f.read()
                 with open(os.path.join("processed", f"{company_name}_keywords.txt"), "r") as f:
                     keywords = f.read()
-                
+
                 # Ensure pillar_page_content is read only if pillar_page_file was uploaded
                 if pillar_page_file:
                     pillar_page_content = read_pdf(pillar_page_path)
@@ -462,7 +447,7 @@ def main():
                     pillar_page_document = run_gpt_task(instructions["pillar_page"], prompt_pillar_page)
                     with open(os.path.join("processed", f"{company_name}_pillar_page.txt"), "w") as f:
                         f.write(pillar_page_document)
-                    
+
                     # English Editor for Pillar Page
                     prompt_english_editor_pillar = prompts["prompt_english_editor"].format(file_name=f"{company_name}_pillar_page.txt", file_content=pillar_page_document)
                     pillar_page_final = run_gpt_task(instructions["english_editor"], prompt_english_editor_pillar)
@@ -473,7 +458,7 @@ def main():
                     with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_tab5.zip"), "w") as zipf:
                         zipf.write(os.path.join("processed", f"{company_name}_pillar_page.txt"), f"{company_name}_pillar_page.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), f"{company_name}_pillar_page_final.txt")
-                    
+
                     st.success("Pillar page has been processed and edited!")
                     # with open(os.path.join("processed", f"{company_name}_specific_outputs_tab5.zip"), "rb") as f:
                         # st.download_button("Download Pillar Page Files", f, file_name=f"{company_name}_specific_outputs_tab5.zip")
@@ -482,32 +467,29 @@ def main():
             else:
                 st.error("Please specify the company name in the first tab.")
 
-
-
-
     with tab6:
         st.header("Download and Overwrite Files")
 
         if company_name:
             file_dict = {}
-            
+
             # Scan the 'processed' folder for files
             for root, dirs, files in os.walk("processed"):
                 for file in files:
                     if company_name in file:
                         file_path = os.path.join(root, file)
                         base_name, ext = os.path.splitext(file)
-                        
+
                         # Check if the file has a final version
                         final_version = f"{base_name}_final{ext}"
                         if final_version in files:
                             file_to_offer = final_version
                         else:
                             file_to_offer = file
-                        
+
                         # Store the file paths for download
                         file_dict[file_to_offer] = os.path.join(root, file_to_offer)
-            
+
             if file_dict:
                 st.success("Select a file from the dropdown menu to download!")
                 # Create a dropdown menu for file selection
@@ -521,7 +503,7 @@ def main():
                             data=f,
                             file_name=selected_file
                         )
-                    
+
                     # Upload button to re-upload the downloaded file
                     uploaded_file = st.file_uploader("Re-upload the downloaded file (CSV or PDF)", type=["csv", "pdf", "txt"], key="tab6_file_uploader")
                     if uploaded_file:
@@ -549,8 +531,8 @@ def login():
                 st.error("Incorrect password")
         else:
             st.error("Username not found")
+
 if __name__ == "__main__":
-        
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
     if not st.session_state['logged_in']:
