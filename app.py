@@ -90,7 +90,8 @@ st.markdown("""
         height: 40px;
         white-space: pre-wrap;
         background-color: transparent;
-        border-radius: 2px 2px 2px 2px;
+        border-radius: 10px;
+        border: 1px solid white;
         gap: 6px;
         padding-top: 15px;
         padding-bottom: 15px;
@@ -100,15 +101,32 @@ st.markdown("""
         background-color: transparent;
         color: white;
     }
+    .stMarkdown, .stTextInput, .stButton, .stHeader, .stTitle, .stSubheader, .stCaption, .stText {
+        color: white;
+    }
+    .stBox {
+        border: 1px solid white;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px 0;
+    }
 </style>""", unsafe_allow_html=True)
 
 def main():
     st.title("Document Analysis and Processing")
     # Tabs: Upload documents and specify company name, Run GPT Tasks, Upload CSV Files, Download Specific Outputs, Upload Pillar Page
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Upload Documents", "Run GPT Tasks", "Upload CSV Files", "Download Specific Outputs", "Upload Pillar Page", "Download all files"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        "Upload Required Documents", 
+        "Execute GPT Tasks", 
+        "Process and Analyze CSV Files", 
+        "Generate Website Content", 
+        "Create Pillar Page", 
+        "Download & Overwrite Files"
+    ])
 
     with tab1:
-        st.header("Upload Documents")
+        st.header("Step 1: Upload Required Documents")
+        st.write("Upload the required PDF documents for analysis.")
         company_name = st.text_input("Specify the company name")
 
         required_files = [
@@ -127,7 +145,7 @@ def main():
             else:
                 uploaded_files[file] = None  # File already exists
 
-        if st.button("Upload"):
+        if st.button("Upload Documents"):
             if company_name:
                 all_files_uploaded = True
                 for file_name, uploaded_file in uploaded_files.items():
@@ -146,9 +164,10 @@ def main():
                 st.error("Please specify the company name.")
 
     with tab2:
-        st.header("Run GPT Tasks")
+        st.header("Step 2: Execute GPT Tasks")
+        st.write("Run GPT tasks to process the uploaded documents and generate outputs.")
 
-        if st.button("Run Tasks"):
+        if st.button("Run GPT Tasks"):
             if company_name:
                 document_contents = {}
                 all_files_present = True
@@ -212,20 +231,21 @@ def main():
                         f.write(seo_keywords)
 
                     # Zip the specific output files for download
-                    with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_tab2.zip"), "w") as zipf:
+                    with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_gpt_tasks.zip"), "w") as zipf:
                         zipf.write(os.path.join("processed", f"{company_name}_buyer_persona.txt"), f"{company_name}_buyer_persona.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_mission_values.txt"), f"{company_name}_mission_values.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_seo_summarizer.txt"), f"{company_name}_seo_summarizer.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_seo_keywords.txt"), f"{company_name}_seo_keywords.txt")
 
-                    st.success("GPT tasks for Tab 2 have been run and files are zipped!")
-                    # with open(os.path.join("processed", f"{company_name}_specific_outputs_tab2.zip"), "rb") as zipf:
-                    #     st.download_button("Download Output Files for Tab 2", zipf, file_name=f"{company_name}_specific_outputs_tab2.zip")
+                    st.success("GPT tasks have been executed and files are zipped!")
+                    # with open(os.path.join("processed", f"{company_name}_specific_outputs_gpt_tasks.zip"), "rb") as zipf:
+                    #     st.download_button("Download Output Files for GPT Tasks", zipf, file_name=f"{company_name}_specific_outputs_gpt_tasks.zip")
             else:
                 st.error("Please specify the company name in the first tab.")
 
     with tab3:
-        st.header("Upload CSV Files")
+        st.header("Step 3: Process and Analyze CSV Files")
+        st.write("Upload CSV files for processing and analysis.")
 
         csv_files = st.file_uploader("Upload CSV files", type="csv", accept_multiple_files=True)
 
@@ -292,9 +312,10 @@ def main():
                 st.error("Please specify the company name in the first tab.")
 
     with tab4:
-        st.header("Download Specific Outputs")
+        st.header("Step 4: Generate Website Content")
+        st.write("Generate topic clusters, website structure, and web page content based on uploaded documents and processed data.")
 
-        if st.button("Run Topic Cluster and Web Page Tasks"):
+        if st.button("Generate Website Content"):
             if company_name:
                 document_contents = {}
                 for file_name in required_files:
@@ -373,7 +394,7 @@ def main():
                     f.write(about_us_final)
 
                 # Zip the specific outputs for download
-                with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_tab4.zip"), "w") as zipf:
+                with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_website_content.zip"), "w") as zipf:
                     zipf.write(os.path.join("processed", f"{company_name}_topic_cluster_document.txt"), f"{company_name}_topic_cluster_document.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_keywords.txt"), f"{company_name}_keywords.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_website_structure_document.txt"), f"{company_name}_website_structure_document.txt")
@@ -383,14 +404,15 @@ def main():
                     zipf.write(os.path.join("processed", f"{company_name}_about_us.txt"), f"{company_name}_about_us.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_about_us_final.txt"), f"{company_name}_about_us_final.txt")
 
-                st.success("Specific outputs have been processed!")
-                # with open(os.path.join("processed", f"{company_name}_specific_outputs_tab4.zip"), "rb") as f:
-                #     st.download_button("Download Specific Outputs", f, file_name=f"{company_name}_specific_outputs_tab4.zip")
+                st.success("Website content has been generated and zipped!")
+                # with open(os.path.join("processed", f"{company_name}_specific_outputs_website_content.zip"), "rb") as f:
+                #     st.download_button("Download Website Content Files", f, file_name=f"{company_name}_specific_outputs_website_content.zip")
             else:
                 st.error("Please specify the company name in the first tab.")
 
     with tab5:
-        st.header("Upload Pillar Page")
+        st.header("Step 5: Create Pillar Page")
+        st.write("Upload and process a Pillar Page PDF document.")
 
         pillar_page_file = st.file_uploader("Upload a Pillar Page PDF", type="pdf")
 
@@ -455,20 +477,21 @@ def main():
                         f.write(pillar_page_final)
 
                     # Zip the pillar page files for download
-                    with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_tab5.zip"), "w") as zipf:
+                    with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_pillar_page.zip"), "w") as zipf:
                         zipf.write(os.path.join("processed", f"{company_name}_pillar_page.txt"), f"{company_name}_pillar_page.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), f"{company_name}_pillar_page_final.txt")
 
                     st.success("Pillar page has been processed and edited!")
-                    # with open(os.path.join("processed", f"{company_name}_specific_outputs_tab5.zip"), "rb") as f:
-                        # st.download_button("Download Pillar Page Files", f, file_name=f"{company_name}_specific_outputs_tab5.zip")
+                    # with open(os.path.join("processed", f"{company_name}_specific_outputs_pillar_page.zip"), "rb") as f:
+                    #     st.download_button("Download Pillar Page Files", f, file_name=f"{company_name}_specific_outputs_pillar_page.zip")
                 else:
                     st.error("Please upload the Pillar Page PDF.")
             else:
                 st.error("Please specify the company name in the first tab.")
 
     with tab6:
-        st.header("Download and Overwrite Files")
+        st.header("Step 6: Download & Overwrite Files")
+        st.write("Download and re-upload processed files for further editing.")
 
         if company_name:
             file_dict = {}
