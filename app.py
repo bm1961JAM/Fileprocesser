@@ -87,7 +87,28 @@ page_bg_img, logo_html = get_page_bg_and_logo_styles()
 # Apply CSS and HTML
 st.markdown(page_bg_img, unsafe_allow_html=True)
 st.markdown(logo_html, unsafe_allow_html=True)
+st.markdown("""
+<style>
 
+	.stTabs [data-baseweb="tab-list"] {
+		gap: 6px;
+    }
+
+	.stTabs [data-baseweb="tab"] {
+		height: 40px;
+        white-space: pre-wrap;
+		background-color: #000000;
+		border-radius: 2px 2px 2px 2px;
+		gap: 6px;
+		padding-top: 15px;
+		padding-bottom: 15px;
+    }
+
+	.stTabs [aria-selected="true"] {
+  		background-color: #000000;
+	}
+
+</style>""", unsafe_allow_html=True)
 
 def main():
 
