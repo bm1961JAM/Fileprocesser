@@ -69,7 +69,7 @@ if 'user_data' not in st.session_state:
 def add_user():
 
     predefined_users = {
-        " bm1961": "Charlotte-182",
+        "bm1961": "Charlotte-182",
         "sam2": "54321"
     }
 
