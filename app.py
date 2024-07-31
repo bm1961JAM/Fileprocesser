@@ -120,6 +120,9 @@ st.markdown("""
         background-color: white !important;
         border-radius: 10px;
     }
+    .css-1g6gooi {
+        display: none;
+    }
 </style>""", unsafe_allow_html=True)
 
 def main():
