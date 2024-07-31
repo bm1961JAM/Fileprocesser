@@ -45,7 +45,7 @@ with open('instructions.json', 'r') as f:
     instructions = json.load(f)
 
 # Load prompts from JSON file
-with open('prompts.json', 'r') as f:
+with open('prompts.json', 'r') as f):
     prompts = json.load(f)
 
 # Create a folder to save uploaded files if it doesn't exist
@@ -107,6 +107,9 @@ st.markdown("""
         border-radius: 10px;
         padding: 10px;
     }
+    .stTextInput > label, .stTextInput > div, .stTextInput > label > div {
+        color: white !important;
+    }
     .stButton button {
         color: black !important;
     }
@@ -145,7 +148,10 @@ def main():
 
     with tab1:
         st.header("Step 1: Upload Required Documents")
-        st.write("Upload the required PDF documents for analysis.")
+        st.markdown("""
+            <p>In this step, you need to upload the required PDF documents for analysis.</p>
+            <p>Outcome: The system will save the uploaded documents for further processing in the subsequent steps.</p>
+        """, unsafe_allow_html=True)
         company_name = st.text_input("Specify the company name")
 
         required_files = [
@@ -182,9 +188,26 @@ def main():
             else:
                 st.error("Please specify the company name.")
 
+        # Add download button for this tab's files
+        if os.path.exists("uploads"):
+            with ZipFile(os.path.join("processed", f"{company_name}_uploads.zip"), "w") as zipf:
+                for file_name in required_files:
+                    file_path = os.path.join("uploads", f"{company_name}_{file_name}")
+                    if os.path.exists(file_path):
+                        zipf.write(file_path, file_name)
+            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+                st.download_button(
+                    label="Download Uploaded Documents",
+                    data=zipf,
+                    file_name=f"{company_name}_uploads.zip"
+                )
+
     with tab2:
         st.header("Step 2: Execute GPT Tasks")
-        st.write("Run GPT tasks to process the uploaded documents and generate outputs.")
+        st.markdown("""
+            <p>In this step, you will run GPT tasks to process the uploaded documents and generate outputs such as buyer persona, mission statement, SEO summaries, and keywords.</p>
+            <p>Outcome: The system will generate and save various outputs based on the uploaded documents.</p>
+        """, unsafe_allow_html=True)
 
         if st.button("Run GPT Tasks"):
             if company_name:
@@ -248,6 +271,16 @@ def main():
                     seo_keywords = run_gpt_task(instructions["magic_words"], prompt_magic_words)
                     with open(os.path.join("processed", f"{company_name}_seo_keywords.txt"), "w") as f:
                         f.write(seo_keywords)
+                     # Brand Voice   
+                    prompt_brand_voice = prompts["prompt_brand_voice"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona, mission_values=mission_values)
+                    brand_voice = run_gpt_task(instructions["brand_voice"], prompt_brand_voice)
+                    with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
+                        f.write(brand_voice)
+    
+                    prompt_english_editor_brand = prompts["prompt_english_editor"].format(file_name=f"{company_name}_brand_voice.txt", file_content=brand_voice)
+                    english_editor_brand_output = run_gpt_task(instructions["english_editor"], prompt_english_editor_brand)
+                    with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
+                        f.write(english_editor_brand_output)
 
                     # Zip the specific output files for download
                     with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_gpt_tasks.zip"), "w") as zipf:
@@ -255,16 +288,30 @@ def main():
                         zipf.write(os.path.join("processed", f"{company_name}_mission_values.txt"), f"{company_name}_mission_values.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_seo_summarizer.txt"), f"{company_name}_seo_summarizer.txt")
                         zipf.write(os.path.join("processed", f"{company_name}_seo_keywords.txt"), f"{company_name}_seo_keywords.txt")
+                        zipf.write(os.path.join("processed", f"{company_name}_brand_voice.txt"), f"{company_name}_brand_voice.txt")
 
                     st.success("GPT tasks have been executed and files are zipped!")
-                    # with open(os.path.join("processed", f"{company_name}_specific_outputs_gpt_tasks.zip"), "rb") as zipf:
-                    #     st.download_button("Download Output Files for GPT Tasks", zipf, file_name=f"{company_name}_specific_outputs_gpt_tasks.zip")
-            else:
-                st.error("Please specify the company name in the first tab.")
+
+        # Add download button for this tab's files
+        if os.path.exists("processed"):
+            with ZipFile(os.path.join("processed", f"{company_name}_gpt_tasks.zip"), "w") as zipf:
+                for file in ["buyer_persona.txt", "mission_values.txt", "seo_summarizer.txt", "seo_keywords.txt"]:
+                    file_path = os.path.join("processed", f"{company_name}_{file}")
+                    if os.path.exists(file_path):
+                        zipf.write(file_path, file)
+            with open(os.path.join("processed", f"{company_name}_gpt_tasks.zip"), "rb") as zipf:
+                st.download_button(
+                    label="Download GPT Task Outputs",
+                    data=zipf,
+                    file_name=f"{company_name}_gpt_tasks.zip"
+                )
 
     with tab3:
         st.header("Step 3: Process and Analyze CSV Files")
-        st.write("Upload CSV files for processing and analysis.")
+        st.markdown("""
+            <p>In this step, you need to upload CSV files for processing and analysis. The system will analyze the CSV files and generate a list of top 150 keywords based on various criteria.</p>
+            <p>Outcome: The system will process the CSV files and generate a file containing the top 150 keywords.</p>
+        """, unsafe_allow_html=True)
 
         csv_files = st.file_uploader("Upload CSV files", type="csv", accept_multiple_files=True)
 
@@ -330,9 +377,25 @@ def main():
             else:
                 st.error("Please specify the company name in the first tab.")
 
+        # Add download button for this tab's files
+        if os.path.exists("processed"):
+            with ZipFile(os.path.join("processed", f"{company_name}_csv_analysis.zip"), "w") as zipf:
+                file_path = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
+                if os.path.exists(file_path):
+                    zipf.write(file_path, "top_150_keywords.csv")
+            with open(os.path.join("processed", f"{company_name}_csv_analysis.zip"), "rb") as zipf:
+                st.download_button(
+                    label="Download CSV Analysis Outputs",
+                    data=zipf,
+                    file_name=f"{company_name}_csv_analysis.zip"
+                )
+
     with tab4:
         st.header("Step 4: Generate Website Content")
-        st.write("Generate topic clusters, website structure, and web page content based on uploaded documents and processed data.")
+        st.markdown("""
+            <p>In this step, you will generate topic clusters, website structure, and web page content based on uploaded documents and processed data.</p>
+            <p>Outcome: The system will generate various documents related to website content, including topic clusters, website structure, and specific web page content.</p>
+        """, unsafe_allow_html=True)
 
         if st.button("Generate Website Content"):
             if company_name:
@@ -347,6 +410,7 @@ def main():
                 key_stats_text = document_contents.get("key_stats.pdf", "")
                 about_us_text = document_contents.get("about_us.pdf", "")
                 colour_scheme_text = document_contents.get("colour_scheme.pdf", "")
+                colour_scheme_text = document_contents.get("brand_voice.pdf", "")
 
                 with open(os.path.join("processed", f"{company_name}_buyer_persona.txt"), "r") as f:
                     buyer_persona = f.read()
@@ -370,16 +434,6 @@ def main():
                 website_structure_document = run_gpt_task(instructions["website_structure"], prompt_website_structure)
                 with open(os.path.join("processed", f"{company_name}_website_structure_document.txt"), "w") as f:
                     f.write(website_structure_document)
-
-                prompt_brand_voice = prompts["prompt_brand_voice"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona, mission_values=mission_values, topic_cluster_document=topic_cluster_document, keywords=keywords)
-                brand_voice = run_gpt_task(instructions["brand_voice"], prompt_brand_voice)
-                with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
-                    f.write(brand_voice)
-
-                prompt_english_editor_brand = prompts["prompt_english_editor"].format(file_name=f"{company_name}_brand_voice.txt", file_content=brand_voice)
-                english_editor_brand_output = run_gpt_task(instructions["english_editor"], prompt_english_editor_brand)
-                with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
-                    f.write(english_editor_brand_output)
 
                 prompt_extract_home_page = prompts["prompt_extract_home_page"].format(website_structure_document=website_structure_document)
                 home_page_structure = run_gpt_task(instructions["editor"], prompt_extract_home_page)
@@ -417,21 +471,33 @@ def main():
                     zipf.write(os.path.join("processed", f"{company_name}_topic_cluster_document.txt"), f"{company_name}_topic_cluster_document.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_keywords.txt"), f"{company_name}_keywords.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_website_structure_document.txt"), f"{company_name}_website_structure_document.txt")
-                    zipf.write(os.path.join("processed", f"{company_name}_brand_voice.txt"), f"{company_name}_brand_voice.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_home_page.txt"), f"{company_name}_home_page.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_home_page_final.txt"), f"{company_name}_home_page_final.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_about_us.txt"), f"{company_name}_about_us.txt")
                     zipf.write(os.path.join("processed", f"{company_name}_about_us_final.txt"), f"{company_name}_about_us_final.txt")
 
                 st.success("Website content has been generated and zipped!")
-                # with open(os.path.join("processed", f"{company_name}_specific_outputs_website_content.zip"), "rb") as f:
-                #     st.download_button("Download Website Content Files", f, file_name=f"{company_name}_specific_outputs_website_content.zip")
-            else:
-                st.error("Please specify the company name in the first tab.")
+
+        # Add download button for this tab's files
+        if os.path.exists("processed"):
+            with ZipFile(os.path.join("processed", f"{company_name}_website_content.zip"), "w") as zipf:
+                for file in ["topic_cluster_document.txt", "keywords.txt", "website_structure_document.txt", "brand_voice.txt", "home_page.txt", "home_page_final.txt", "about_us.txt", "about_us_final.txt"]:
+                    file_path = os.path.join("processed", f"{company_name}_{file}")
+                    if os.path.exists(file_path):
+                        zipf.write(file_path, file)
+            with open(os.path.join("processed", f"{company_name}_website_content.zip"), "rb") as zipf:
+                st.download_button(
+                    label="Download Website Content Outputs",
+                    data=zipf,
+                    file_name=f"{company_name}_website_content.zip"
+                )
 
     with tab5:
         st.header("Step 5: Create Pillar Page")
-        st.write("Upload and process a Pillar Page PDF document.")
+        st.markdown("""
+            <p>In this step, you will upload and process a Pillar Page PDF document.</p>
+            <p>Outcome: The system will generate and edit the content of the pillar page based on the provided document.</p>
+        """, unsafe_allow_html=True)
 
         pillar_page_file = st.file_uploader("Upload a Pillar Page PDF", type="pdf")
 
@@ -501,16 +567,27 @@ def main():
                         zipf.write(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), f"{company_name}_pillar_page_final.txt")
 
                     st.success("Pillar page has been processed and edited!")
-                    # with open(os.path.join("processed", f"{company_name}_specific_outputs_pillar_page.zip"), "rb") as f:
-                    #     st.download_button("Download Pillar Page Files", f, file_name=f"{company_name}_specific_outputs_pillar_page.zip")
-                else:
-                    st.error("Please upload the Pillar Page PDF.")
-            else:
-                st.error("Please specify the company name in the first tab.")
+
+        # Add download button for this tab's files
+        if os.path.exists("processed"):
+            with ZipFile(os.path.join("processed", f"{company_name}_pillar_page.zip"), "w") as zipf:
+                for file in ["pillar_page.txt", "pillar_page_final.txt"]:
+                    file_path = os.path.join("processed", f"{company_name}_{file}")
+                    if os.path.exists(file_path):
+                        zipf.write(file_path, file)
+            with open(os.path.join("processed", f"{company_name}_pillar_page.zip"), "rb") as zipf:
+                st.download_button(
+                    label="Download Pillar Page Outputs",
+                    data=zipf,
+                    file_name=f"{company_name}_pillar_page.zip"
+                )
 
     with tab6:
         st.header("Step 6: Download & Overwrite Files")
-        st.write("Download and re-upload processed files for further editing.")
+        st.markdown("""
+            <p>In this step, you can download and re-upload processed files for further editing.</p>
+            <p>Outcome: The system allows you to download the generated files and re-upload any edited versions.</p>
+        """, unsafe_allow_html=True)
 
         if company_name:
             file_dict = {}
@@ -559,7 +636,7 @@ def main():
             st.error("Please specify the company name in the first tab.")
 
 def login():
-    st.title("Login")
+    st.markdown("<h1 style='color:white;'>Login</h1>", unsafe_allow_html=True)
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
     if st.button("Login"):
