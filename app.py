@@ -102,8 +102,8 @@ st.markdown("""
         color: black !important;
     }
     .stMarkdown, .stTextInput, .stButton, .stHeader, .stTitle, .stSubheader, .stCaption, .stText, .stExpander, .stDownloadButton, .stException {
-        color: black !important;
-        background-color: white !important;
+        color: white !important;
+        background-color: transparent !important;
         border-radius: 10px;
         padding: 10px;
     }
@@ -112,12 +112,12 @@ st.markdown("""
         border-radius: 10px;
         padding: 10px;
         margin: 10px 0;
-        background-color: white;
-        color: black !important;
+        background-color: transparent;
+        color: white !important;
     }
     .css-1l7r3cz, .css-1d391kg, .css-hxt7ib, .css-18e3th9, .css-1aehpv1, .css-2trqyj, .css-1v3fvcr, .css-1cpxqw2, .css-12oz5g7, .css-1v0mbdj {
-        color: black !important;
-        background-color: white !important;
+        color: white !important;
+        background-color: transparent !important;
         border-radius: 10px;
     }
     .css-1g6gooi {
