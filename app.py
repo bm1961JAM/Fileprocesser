@@ -101,11 +101,14 @@ st.markdown("""
         background-color: white;
         color: black !important;
     }
-    .stMarkdown, .stTextInput, .stButton, .stHeader, .stTitle, .stSubheader, .stCaption, .stText, .stExpander, .stDownloadButton, .stException {
+    .stMarkdown, .stTextInput, .stHeader, .stTitle, .stSubheader, .stCaption, .stText, .stExpander, .stDownloadButton, .stException {
         color: white !important;
         background-color: transparent !important;
         border-radius: 10px;
         padding: 10px;
+    }
+    .stButton button {
+        color: black !important;
     }
     .stBox {
         border: 1px solid white;
@@ -122,6 +125,9 @@ st.markdown("""
     }
     .css-1g6gooi {
         display: none;
+    }
+    .stHeader h1, .stTitle h1, .stSubheader h2 {
+        color: white !important;
     }
 </style>""", unsafe_allow_html=True)
 
