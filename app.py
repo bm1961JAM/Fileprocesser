@@ -149,8 +149,8 @@ def main():
     with tab1:
         st.header("Step 1: Upload Required Documents")
         st.markdown("""
-            <p>In this step, you need to upload the required PDF documents for analysis.</p>
-            <p>Outcome: The system will save the uploaded documents for further processing in the subsequent steps.</p>
+            <p>In this step, you need to upload the workshop documents for analysis.</p>
+            <p>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
         """, unsafe_allow_html=True)
         company_name = st.text_input("Specify the company name")
 
@@ -205,8 +205,8 @@ def main():
     with tab2:
         st.header("Step 2: Execute GPT Tasks")
         st.markdown("""
-            <p>In this step, you will run GPT tasks to process the uploaded documents and generate outputs such as buyer persona, mission statement, SEO summaries, and keywords.</p>
-            <p>Outcome: The system will generate and save various outputs based on the uploaded documents.</p>
+            <p>In this step, you will run GPT tasks to process the uploaded documents. </p>
+            <p>Outcome: The system will then generate outputs such as buyer persona, mission statement, brand voice, SEO summaries, and keywords for further research.</p>
         """, unsafe_allow_html=True)
 
         if st.button("Run GPT Tasks"):
@@ -394,7 +394,6 @@ def main():
         st.header("Step 4: Generate Website Content")
         st.markdown("""
             <p>In this step, you will generate topic clusters, website structure, and web page content based on uploaded documents and processed data.</p>
-            <p>Outcome: The system will generate various documents related to website content, including topic clusters, website structure, and specific web page content.</p>
         """, unsafe_allow_html=True)
 
         if st.button("Generate Website Content"):
