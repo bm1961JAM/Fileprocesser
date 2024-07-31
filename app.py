@@ -45,7 +45,7 @@ with open('instructions.json', 'r') as f:
     instructions = json.load(f)
 
 # Load prompts from JSON file
-with open('prompts.json', 'r') as f):
+with open('prompts.json', 'r') as f:
     prompts = json.load(f)
 
 # Create a folder to save uploaded files if it doesn't exist
