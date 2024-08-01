@@ -132,6 +132,9 @@ st.markdown("""
     .stHeader h1, .stTitle h1, .stSubheader h2 {
         color: white !important;
     }
+    .stDownloadButton > button {
+        color: black !important;
+    }
 </style>""", unsafe_allow_html=True)
 
 def main():
@@ -494,18 +497,25 @@ def main():
     with tab5:
         st.header("Step 5: Create Pillar Page")
         st.markdown("""
-            <p>In this step, you will upload and process a Pillar Page PDF document.</p>
-            <p>Outcome: The system will generate and edit the content of the pillar page based on the provided document.</p>
+            <p>In this step, you will enter the content or upload a Pillar Page PDF document.</p>
+            <p>Outcome: The system will generate and edit the content of the pillar page based on the provided text or document.</p>
         """, unsafe_allow_html=True)
 
-        pillar_page_file = st.file_uploader("Upload a Pillar Page PDF", type="pdf")
+        # Text input for prompt
+        pillar_page_text = st.text_area("Enter the content for the Pillar Page")
 
+        # Option to upload a PDF as before
+        pillar_page_file = st.file_uploader("Or upload a Pillar Page PDF", type="pdf")
+
+        # Process the entered text or uploaded PDF
         if pillar_page_file:
             pillar_page_path = os.path.join("uploads", f"{company_name}_pillar_page.pdf")
             with open(pillar_page_path, "wb") as f:
                 f.write(pillar_page_file.getbuffer())
 
             pillar_page_content = read_pdf(pillar_page_path)
+        else:
+            pillar_page_content = pillar_page_text
 
         if st.button("Process Pillar Page"):
             if company_name:
@@ -539,33 +549,33 @@ def main():
                 if pillar_page_file:
                     pillar_page_content = read_pdf(pillar_page_path)
 
-                    # Generate the prompt for the pillar page
-                    prompt_pillar_page = prompts["prompt_pillar_page"].format(
-                        company_name=company_name, 
-                        pillar_page_content=pillar_page_content, 
-                        product_list=product_list_text, 
-                        USP=USP_text, 
-                        key_stats=key_stats_text, 
-                        about_us=about_us_text, 
-                        brand_voice_text=brand_voice, 
-                        keywords=keywords
-                    )
-                    pillar_page_document = run_gpt_task(instructions["pillar_page"], prompt_pillar_page)
-                    with open(os.path.join("processed", f"{company_name}_pillar_page.txt"), "w") as f:
-                        f.write(pillar_page_document)
+                # Generate the prompt for the pillar page
+                prompt_pillar_page = prompts["prompt_pillar_page"].format(
+                    company_name=company_name, 
+                    pillar_page_content=pillar_page_content, 
+                    product_list=product_list_text, 
+                    USP=USP_text, 
+                    key_stats=key_stats_text, 
+                    about_us=about_us_text, 
+                    brand_voice_text=brand_voice, 
+                    keywords=keywords
+                )
+                pillar_page_document = run_gpt_task(instructions["pillar_page"], prompt_pillar_page)
+                with open(os.path.join("processed", f"{company_name}_pillar_page.txt"), "w") as f:
+                    f.write(pillar_page_document)
 
-                    # English Editor for Pillar Page
-                    prompt_english_editor_pillar = prompts["prompt_english_editor"].format(file_name=f"{company_name}_pillar_page.txt", file_content=pillar_page_document)
-                    pillar_page_final = run_gpt_task(instructions["english_editor"], prompt_english_editor_pillar)
-                    with open(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), "w") as f:
-                        f.write(pillar_page_final)
+                # English Editor for Pillar Page
+                prompt_english_editor_pillar = prompts["prompt_english_editor"].format(file_name=f"{company_name}_pillar_page.txt", file_content=pillar_page_document)
+                pillar_page_final = run_gpt_task(instructions["english_editor"], prompt_english_editor_pillar)
+                with open(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), "w") as f:
+                    f.write(pillar_page_final)
 
-                    # Zip the pillar page files for download
-                    with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_pillar_page.zip"), "w") as zipf:
-                        zipf.write(os.path.join("processed", f"{company_name}_pillar_page.txt"), f"{company_name}_pillar_page.txt")
-                        zipf.write(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), f"{company_name}_pillar_page_final.txt")
+                # Zip the pillar page files for download
+                with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_pillar_page.zip"), "w") as zipf:
+                    zipf.write(os.path.join("processed", f"{company_name}_pillar_page.txt"), f"{company_name}_pillar_page.txt")
+                    zipf.write(os.path.join("processed", f"{company_name}_pillar_page_final.txt"), f"{company_name}_pillar_page_final.txt")
 
-                    st.success("Pillar page has been processed and edited!")
+                st.success("Pillar page has been processed and edited!")
 
         # Add download button for this tab's files
         if os.path.exists("processed"):
