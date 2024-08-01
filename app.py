@@ -106,6 +106,9 @@ st.markdown("""
         border-radius: 10px;
         padding: 10px;
     }
+    p {
+        color: white !important;
+    }
     .stTextInput > label, .stTextInput > div, .stTextInput > label > div {
         color: white !important;
     }
@@ -135,6 +138,7 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 def main():
     st.markdown("<h1 style='color:white;'>Document Analysis and Processing</h1>", unsafe_allow_html=True)
