@@ -291,7 +291,7 @@ def main():
 
                         
                         # Brand Voice   
-                        prompt_brand_voice = prompts["prompt_brand_voice"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona)
+                        prompt_brand_voice = prompts["prompt_brand_voice"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona,keywords = english_editor_seo_output )
                         brand_voice = run_gpt_task(instructions["brand_voice"], prompt_brand_voice)
                         with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
                             f.write(brand_voice)
