@@ -112,16 +112,19 @@ st.markdown("""
     .stTextInput > label, .stTextInput > div, .stTextInput > label > div {
         color: white !important;
     }
-    .stButton button, .stDownloadButton button {
+    .custom-button {
         color: black !important;
         background-color: white !important;
-        border-radius: 10px;
-        padding: 10px 20px;
-        margin: 10px auto;
-        display: block;
+        border-radius: 10px !important;
+        padding: 10px 20px !important;
+        margin: 10px auto !important;
+        display: block !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        font-weight: bold !important;
     }
-    .stButton button div, .stDownloadButton button div {
-        color: black !important;
+    .custom-button:hover {
+        background-color: #ddd !important;
     }
     .stBox {
         border: 1px solid white;
@@ -142,7 +145,28 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
+# Custom function to create a styled HTML button
+def custom_button(label, key):
+    button_id = key.replace(" ", "-")
+    return st.markdown(f"""
+        <style>
+            #{button_id} {{
+                color: black !important;
+                background-color: white !important;
+                border-radius: 10px !important;
+                padding: 10px 20px !important;
+                margin: 10px auto !important;
+                display: block !important;
+                text-align: center !important;
+                text-decoration: none !important;
+                font-weight: bold !important;
+            }}
+            #{button_id}:hover {{
+                background-color: #ddd !important;
+            }}
+        </style>
+        <a id="{button_id}" href="javascript:void(0)">{label}</a>
+    """, unsafe_allow_html=True)
 
 def main():
     st.markdown("<h1 style='color:white;'>Document Analysis and Processing</h1>", unsafe_allow_html=True)
@@ -182,7 +206,8 @@ def main():
             else:
                 uploaded_files[file] = None  # File already exists
 
-        if st.button("Upload Documents", key="upload_documents_tab1"):
+        custom_button("Upload Documents", "upload_documents_tab1")
+        if st.session_state.get("upload_documents_tab1"):
             if company_name:
                 all_files_uploaded = True
                 for file_name, uploaded_file in uploaded_files.items():
@@ -208,13 +233,9 @@ def main():
                     if os.path.exists(file_path):
                         zipf.write(file_path, file_name)
             with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download Uploaded Documents",
-                    data=zipf,
-                    file_name=f"{company_name}_uploads.zip",
-                    key="download_documents_tab1"
-                )
-
+                st.markdown(f"""
+                    <a download="{company_name}_uploads.zip" href="data:application/zip;base64,{base64.b64encode(zipf.read()).decode()}" id="download_documents_tab1" class="custom-button">Download Uploaded Documents</a>
+                """, unsafe_allow_html=True)
 
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
@@ -225,7 +246,8 @@ def main():
 
         company_name = st.text_input("Specify the company name", key="company_name_tab2")
 
-        if st.button("Run GPT Tasks", key="run_gpt_tasks_tab2"):
+        custom_button("Run GPT Tasks", "run_gpt_tasks_tab2")
+        if st.session_state.get("run_gpt_tasks_tab2"):
             if company_name:
                 document_contents = {}
                 all_files_present = True
@@ -316,13 +338,9 @@ def main():
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
             with open(os.path.join("processed", f"{company_name}_gpt_tasks.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download GPT Task Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_gpt_tasks.zip",
-                    key="download_gpt_tasks_tab2"
-                )
-
+                st.markdown(f"""
+                    <a download="{company_name}_gpt_tasks.zip" href="data:application/zip;base64,{base64.b64encode(zipf.read()).decode()}" id="download_gpt_tasks_tab2" class="custom-button">Download GPT Task Outputs</a>
+                """, unsafe_allow_html=True)
 
     with tab3:
         st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
@@ -335,7 +353,8 @@ def main():
 
         csv_files = st.file_uploader("Upload CSV files", type="csv", accept_multiple_files=True, key="csv_files_tab3")
 
-        if csv_files and st.button("Process CSV Files", key="process_csv_files_tab3"):
+        custom_button("Process CSV Files", "process_csv_files_tab3")
+        if st.session_state.get("process_csv_files_tab3"):
             if company_name:
                 csv_file_paths = []
                 for i, file in enumerate(csv_files):
@@ -390,8 +409,6 @@ def main():
                     top_keywords.to_csv(output_file, index=False)
 
                     st.success("CSV files processed and top 150 keywords saved!")
-                    # with open(output_file, "rb") as f:
-                    #     st.download_button("Download Top 150 Keywords", f, file_name=f"{company_name}_top_150_keywords.csv")
                 else:
                     st.error("No CSV files found.")
             else:
@@ -404,13 +421,9 @@ def main():
                 if os.path.exists(file_path):
                     zipf.write(file_path, "top_150_keywords.csv")
             with open(os.path.join("processed", f"{company_name}_csv_analysis.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download CSV Analysis Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_csv_analysis.zip",
-                    key="download_csv_analysis_tab3"
-                )
-
+                st.markdown(f"""
+                    <a download="{company_name}_csv_analysis.zip" href="data:application/zip;base64,{base64.b64encode(zipf.read()).decode()}" id="download_csv_analysis_tab3" class="custom-button">Download CSV Analysis Outputs</a>
+                """, unsafe_allow_html=True)
 
     with tab4:
         st.markdown("<h1 style='color:white;'>Step 4: Generate Website Content</h1>", unsafe_allow_html=True)
@@ -420,7 +433,8 @@ def main():
 
         company_name = st.text_input("Specify the company name", key="company_name_tab4")
 
-        if st.button("Generate Website Content", key="generate_website_content_tab4"):
+        custom_button("Generate Website Content", "generate_website_content_tab4")
+        if st.session_state.get("generate_website_content_tab4"):
             if company_name:
                 document_contents = {}
                 for file_name in required_files:
@@ -504,18 +518,14 @@ def main():
         # Add download button for this tab's files
         if os.path.exists("processed"):
             with ZipFile(os.path.join("processed", f"{company_name}_website_content.zip"), "w") as zipf:
-                for file in ["topic_cluster_document.txt", "keywords.txt", "website_structure_document.txt", "home_page.txt", "home_page_final.txt", "about_us.txt", "about_us_final.txt"]:
+                for file in ["topic_cluster_document.txt", "keywords.txt", "website_structure_document.txt", "brand_voice.txt", "home_page.txt", "home_page_final.txt", "about_us.txt", "about_us_final.txt"]:
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
             with open(os.path.join("processed", f"{company_name}_website_content.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download Website Content Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_website_content.zip",
-                    key="download_website_content_tab4"
-                )
-
+                st.markdown(f"""
+                    <a download="{company_name}_website_content.zip" href="data:application/zip;base64,{base64.b64encode(zipf.read()).decode()}" id="download_website_content_tab4" class="custom-button">Download Website Content Outputs</a>
+                """, unsafe_allow_html=True)
 
     with tab5:
         st.markdown("<h1 style='color:white;'>Step 5: Create Pillar Page</h1>", unsafe_allow_html=True)
@@ -542,7 +552,8 @@ def main():
         else:
             pillar_page_content = pillar_page_text
 
-        if st.button("Process Pillar Page", key="process_pillar_page_tab5"):
+        custom_button("Process Pillar Page", "process_pillar_page_tab5")
+        if st.session_state.get("process_pillar_page_tab5"):
             if company_name:
                 # Read content from the saved PDFs
                 document_contents = {}
@@ -610,13 +621,9 @@ def main():
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
             with open(os.path.join("processed", f"{company_name}_pillar_page.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download Pillar Page Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_pillar_page.zip",
-                    key="download_pillar_page_tab5"
-                )
-
+                st.markdown(f"""
+                    <a download="{company_name}_pillar_page.zip" href="data:application/zip;base64,{base64.b64encode(zipf.read()).decode()}" id="download_pillar_page_tab5" class="custom-button">Download Pillar Page Outputs</a>
+                """, unsafe_allow_html=True)
 
     with tab6:
         st.markdown("<h1 style='color:white;'>Step 6: Download & Overwrite Files</h1>", unsafe_allow_html=True)
@@ -655,12 +662,9 @@ def main():
                 if selected_file:
                     file_path = file_dict[selected_file]
                     with open(file_path, "rb") as f:
-                        st.download_button(
-                            label=f"Download {selected_file}",
-                            data=f,
-                            file_name=selected_file,
-                            key=f"download_{selected_file}_tab6"
-                        )
+                        st.markdown(f"""
+                            <a download="{selected_file}" href="data:application/octet-stream;base64,{base64.b64encode(f.read()).decode()}" id="download_{selected_file}_tab6" class="custom-button">Download {selected_file}</a>
+                        """, unsafe_allow_html=True)
 
                     # Upload button to re-upload the downloaded file
                     uploaded_file = st.file_uploader("Re-upload the downloaded file (CSV or PDF)", type=["csv", "pdf", "txt"], key="tab6_file_uploader")
@@ -678,16 +682,19 @@ def login():
     st.markdown("<h1 style='color:white;'>Login</h1>", unsafe_allow_html=True)
     username = st.text_input("Username", key="login_username")
     password = st.text_input("Password", type="password", key="login_password")
-    if st.button("Login", key="login_button"):
-        if username in st.session_state['user_data']['usernames']:
-            index = st.session_state['user_data']['usernames'].index(username)
-            if bcrypt.checkpw(password.encode(), st.session_state['user_data']['passwords'][index]):
-                st.session_state['logged_in'] = True
-                st.session_state['username'] = username
-                st.experimental_rerun()  # Rerun the app after login
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        custom_button("Login", "login_button")
+        if st.session_state.get("login_button"):
+            if username in st.session_state['user_data']['usernames']:
+                index = st.session_state['user_data']['usernames'].index(username)
+                if bcrypt.checkpw(password.encode(), st.session_state['user_data']['passwords'][index]):
+                    st.session_state['logged_in'] = True
+                    st.session_state['username'] = username
+                    st.experimental_rerun()  # Rerun the app after login
+                else:
+                    st.error("Incorrect password")
             else:
-                st.error("Incorrect password")
-        else:
                 st.error("Username not found")
 
 if __name__ == "__main__":
