@@ -4,3 +4,4 @@ numpy
 pandas
 PyPDF2
 bcrypt
+python-pptx
