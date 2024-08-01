@@ -96,6 +96,10 @@ st.markdown("""
         padding-bottom: 15px;
         color: black !important;
     }
+    .stTabs [data-baseweb="tab"] > div {
+        color: black !important;
+        font-weight: bold !important;
+    }
     .stTabs [aria-selected="true"] {
         background-color: white;
         color: black !important;
@@ -137,11 +141,12 @@ st.markdown("""
         display: none;
     }
     /* Ensure the tab button text is styled consistently */
-    .stTabs [data-baseweb="tab"] > div {
+    .stTabs [data-baseweb="tab"] > div > div {
         color: black !important;
         font-weight: bold !important;
     }
 </style>
+
 """, unsafe_allow_html=True)
 
 def main():
