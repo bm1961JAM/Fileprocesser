@@ -120,6 +120,9 @@ st.markdown("""
         margin: 10px auto;
         display: block;
     }
+    .stButton button div, .stDownloadButton button div {
+        color: black !important;
+    }
     .stBox {
         border: 1px solid white;
         border-radius: 10px;
