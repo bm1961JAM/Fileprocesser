@@ -134,6 +134,9 @@ st.markdown("""
     .stDownloadButton > button {
         color: white !important;
     }
+    .css-18ni7ap h1, .css-1vjdmg9 h1, .css-1t6v2nj h1, .css-18ni7ap h2, .css-1vjdmg9 h2, .css-1t6v2nj h2 {
+        color: white !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
