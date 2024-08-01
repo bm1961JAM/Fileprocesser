@@ -438,7 +438,7 @@ def main():
                     key_stats_text = document_contents.get("key_stats.pdf", "")
                     about_us_text = document_contents.get("about_us.pdf", "")
                     colour_scheme_text = document_contents.get("colour_scheme.pdf", "")
-                    colour_scheme_text = document_contents.get("brand_voice.pdf", "")
+                    brand_voice_text = document_contents.get("brand_voice.pdf", "")
 
                     with open(os.path.join("processed", f"{company_name}_buyer_persona.txt"), "r") as f:
                         buyer_persona = f.read()
@@ -468,6 +468,7 @@ def main():
 
                     with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "r") as f:
                         brand_voice_text = f.read()
+                        
                     with open(os.path.join("processed", f"{company_name}_keywords.txt"), "r") as f:
                         keywords = f.read()
 
