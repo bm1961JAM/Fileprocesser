@@ -45,7 +45,7 @@ with open('instructions.json', 'r') as f:
     instructions = json.load(f)
 
 # Load prompts from JSON file
-with open('prompts.json', 'r') as f:
+with open('prompts.json', 'r') as f):
     prompts = json.load(f)
 
 # Create a folder to save uploaded files if it doesn't exist
@@ -94,30 +94,23 @@ st.markdown("""
         gap: 6px;
         padding-top: 15px;
         padding-bottom: 15px;
-        color: black !important;
-    }
-    .stTabs [data-baseweb="tab"] > div {
-        color: black !important;
-        font-weight: bold !important;
+        color: black !important; /* Ensures the tab text is black */
     }
     .stTabs [aria-selected="true"] {
         background-color: white;
-        color: black !important;
+        color: black !important; /* Ensures the selected tab text is black */
     }
-    .stMarkdown, .stTextInput, .stHeader, .stTitle, .stSubheader, .stCaption, .stText, .stExpander, .stDownloadButton, .stException {
-        color: white !important;
+    .stMarkdown p, .stHeader, .stTitle, .stSubheader, .stCaption, .stText, .stExpander, .stException {
+        color: white !important; /* General text elements in Streamlit */
         background-color: transparent !important;
         border-radius: 10px;
         padding: 10px;
-    }
-    p {
-        color: white !important;
     }
     .stTextInput > label, .stTextInput > div, .stTextInput > label > div {
         color: white !important;
     }
     .stButton button, .stDownloadButton button {
-        color: black !important;
+        color: black !important; /* Button text color */
         background-color: white !important;
         border-radius: 10px !important;
         padding: 10px 20px !important;
@@ -130,7 +123,7 @@ st.markdown("""
         padding: 10px;
         margin: 10px 0;
         background-color: transparent;
-        color: white !important;
+        color: white !important; /* General box text color */
     }
     .css-1l7r3cz, .css-1d391kg, .css-hxt7ib, .css-18e3th9, .css-1aehpv1, .css-2trqyj, .css-1v3fvcr, .css-1cpxqw2, .css-12oz5g7, .css-1v0mbdj {
         color: white !important;
@@ -141,12 +134,11 @@ st.markdown("""
         display: none;
     }
     /* Ensure the tab button text is styled consistently */
-    .stTabs [data-baseweb="tab"] > div > div {
-        color: black !important;
+    .stTabs [data-baseweb="tab"] > div > div, .stTabs [data-baseweb="tab"] > div {
+        color: black !important; /* Ensures the tab text is black */
         font-weight: bold !important;
     }
 </style>
-
 """, unsafe_allow_html=True)
 
 def main():
