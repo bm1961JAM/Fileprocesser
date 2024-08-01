@@ -687,19 +687,16 @@ def login():
     st.markdown("<h1 style='color:white;'>Login</h1>", unsafe_allow_html=True)
     username = st.text_input("Username", key="login_username")
     password = st.text_input("Password", type="password", key="login_password")
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        custom_button("Login", "login_button")
-        if st.session_state.get("login_button"):
-            if username in st.session_state['user_data']['usernames']:
-                index = st.session_state['user_data']['usernames'].index(username)
-                if bcrypt.checkpw(password.encode(), st.session_state['user_data']['passwords'][index]):
-                    st.session_state['logged_in'] = True
-                    st.session_state['username'] = username
-                    st.experimental_rerun()  # Rerun the app after login
-                else:
-                    st.error("Incorrect password")
+    if st.button("Login", key="login_button"):
+        if username in st.session_state['user_data']['usernames']:
+            index = st.session_state['user_data']['usernames'].index(username)
+            if bcrypt.checkpw(password.encode(), st.session_state['user_data']['passwords'][index]):
+                st.session_state['logged_in'] = True
+                st.session_state['username'] = username
+                st.experimental_rerun()  # Rerun the app after login
             else:
+                st.error("Incorrect password")
+        else:
                 st.error("Username not found")
 
 if __name__ == "__main__":
