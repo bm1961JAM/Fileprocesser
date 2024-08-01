@@ -288,12 +288,14 @@ def main():
                         seo_keywords = run_gpt_task(instructions["magic_words"], prompt_magic_words)
                         with open(os.path.join("processed", f"{company_name}_seo_keywords.txt"), "w") as f:
                             f.write(seo_keywords)
+
+                        
                         # Brand Voice   
-                        prompt_brand_voice = prompts["prompt_brand_voice"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona, mission_values=mission_values)
+                        prompt_brand_voice = prompts["prompt_brand_voice"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, buyer_persona=buyer_persona)
                         brand_voice = run_gpt_task(instructions["brand_voice"], prompt_brand_voice)
                         with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
                             f.write(brand_voice)
-
+                        
                         prompt_english_editor_brand = prompts["prompt_english_editor"].format(file_name=f"{company_name}_brand_voice.txt", file_content=brand_voice)
                         english_editor_brand_output = run_gpt_task(instructions["english_editor"], prompt_english_editor_brand)
                         with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "w") as f:
