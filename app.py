@@ -106,7 +106,7 @@ st.markdown("""
         border-radius: 10px;
         padding: 10px;
     }
-    .stTextInput > label, .stTextInput > div, .stTextInput > label > div {
+    .stTextInput > label, .stTextInput > div, .stTextInput > label > div, .stFileUploader > label {
         color: white !important;
     }
     .stButton button, .stDownloadButton button {
