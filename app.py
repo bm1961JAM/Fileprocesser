@@ -497,14 +497,15 @@ def main():
                     # 6. Services Page
                     prompt_services_page = prompts["prompt_services_page"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text,  brand_voice_text=brand_voice_text, keywords=keywords)
                     services_page_document = run_gpt_task(instructions["products_page"], prompt_services_page)
-                    with open(os.path.join(output_folder, "services_page.txt"), "w") as f:
+                    with open(os.path.join("processed", f"{company_name}services_page.txt"), "w") as f:
                         f.write(services_page_document)
-        
+
+                    
                     # English Editor for Services Page
                     prompt_english_editor_services = prompts["prompt_english_editor"].format(file_name="services_page.txt", file_content=services_page_document)
                     services_page_final = run_gpt_task(instructions["english_editor"], prompt_english_editor_services)
-                    with open(os.path.join(output_folder, "services_page_final.txt"), "w") as f:
-                        f.write(services_page_final)
+                    with open(os.path.join(output_folder, f"{company_name}services_page_final.txt"), "w") as f:
+                        f.write(about_us_final)
 
                     # Zip the specific outputs for download
                     with ZipFile(os.path.join("processed", f"{company_name}_specific_outputs_website_content.zip"), "w") as zipf:
