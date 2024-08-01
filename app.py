@@ -142,6 +142,11 @@ st.markdown("""
     .css-1g6gooi {
         display: none;
     }
+    /* Ensure the tab button text is styled consistently */
+    .stTabs [data-baseweb="tab"] > div {
+        color: black !important;
+        font-weight: bold !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
