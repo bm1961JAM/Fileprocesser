@@ -446,6 +446,8 @@ def main():
                         top_keywords = f.read()
                     with open(os.path.join("processed", f"{company_name}_mission_values.txt"), "r") as f:
                         mission_values = f.read()
+                    with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "r") as f:
+                        brand_voice_text = f.read()
 
                     # 1. Topic Cluster Analysis
                     prompt_topic_cluster = prompts["prompt_topic_cluster"].format(company_name=company_name, product_list=product_list_text,  buyer_persona=buyer_persona, seo_keywords=top_keywords)
@@ -465,9 +467,6 @@ def main():
 
                     prompt_extract_home_page = prompts["prompt_extract_home_page"].format(website_structure_document=website_structure_document)
                     home_page_structure = run_gpt_task(instructions["editor"], prompt_extract_home_page)
-
-                    with open(os.path.join("processed", f"{company_name}_brand_voice.txt"), "r") as f:
-                        brand_voice_text = f.read()
                         
                     with open(os.path.join("processed", f"{company_name}_keywords.txt"), "r") as f:
                         keywords = f.read()
