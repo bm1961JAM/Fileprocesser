@@ -128,21 +128,14 @@ st.markdown("""
     .css-1g6gooi {
         display: none;
     }
-    .stHeader h1, .stTitle h1, .stSubheader h2 {
-        color: white !important;
-    }
     .stDownloadButton > button {
-        color: white !important;
-    }
-    .css-18ni7ap h1, .css-1vjdmg9 h1, .css-1t6v2nj h1, .css-18ni7ap h2, .css-1vjdmg9 h2, .css-1t6v2nj h2 {
         color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-
 def main():
-    st.title("Document Analysis and Processing")
+    st.markdown("<h1 style='color:white;'>Document Analysis and Processing</h1>", unsafe_allow_html=True)
     # Tabs: Upload documents and specify company name, Run GPT Tasks, Upload CSV Files, Download Specific Outputs, Upload Pillar Page
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "Upload Required Documents", 
@@ -154,7 +147,7 @@ def main():
     ])
 
     with tab1:
-        st.header("Step 1: Upload Required Documents")
+        st.markdown("<h1 style='color:white;'>Step 1: Upload Required Documents</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you need to upload the workshop documents for analysis.</p>
             <p>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
@@ -210,7 +203,7 @@ def main():
                 )
 
     with tab2:
-        st.header("Step 2: Execute GPT Tasks")
+        st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you will run GPT tasks to process the uploaded documents. </p>
             <p>Outcome: The system will then generate outputs such as buyer persona, mission statement, brand voice, SEO summaries, and keywords for further research.</p>
@@ -314,7 +307,7 @@ def main():
                 )
 
     with tab3:
-        st.header("Step 3: Process and Analyze CSV Files")
+        st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you need to upload CSV files for processing and analysis. The system will analyze the CSV files and generate a list of top 150 keywords based on various criteria.</p>
             <p>Outcome: The system will process the CSV files and generate a file containing the top 150 keywords.</p>
@@ -398,7 +391,7 @@ def main():
                 )
 
     with tab4:
-        st.header("Step 4: Generate Website Content")
+        st.markdown("<h1 style='color:white;'>Step 4: Generate Website Content</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you will generate topic clusters, website structure, and web page content based on uploaded documents and processed data.</p>
         """, unsafe_allow_html=True)
@@ -499,7 +492,7 @@ def main():
                 )
 
     with tab5:
-        st.header("Step 5: Create Pillar Page")
+        st.markdown("<h1 style='color:white;'>Step 5: Create Pillar Page</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you will enter the content or upload a Pillar Page PDF document.</p>
             <p>Outcome: The system will generate and edit the content of the pillar page based on the provided text or document.</p>
@@ -596,7 +589,7 @@ def main():
                 )
 
     with tab6:
-        st.header("Step 6: Download & Overwrite Files")
+        st.markdown("<h1 style='color:white;'>Step 6: Download & Overwrite Files</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you can download and re-upload processed files for further editing.</p>
             <p>Outcome: The system allows you to download the generated files and re-upload any edited versions.</p>
