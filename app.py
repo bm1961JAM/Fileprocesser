@@ -137,6 +137,9 @@ st.markdown("""
         display: none;
     }
     /* Ensure the tab button text is styled consistently */
+    .stTabs [data-baseweb="tab"] div[aria-selected="true"] {
+        color: black !important;
+    }
     .stTabs [data-baseweb="tab"] > div {
         color: black !important;
         font-weight: bold !important;
