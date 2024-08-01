@@ -165,12 +165,15 @@ def main():
         ]
 
         uploaded_files = {}
-        for file in required_files:
+        cols = st.columns(2)
+        for i, file in enumerate(required_files):
             file_path = os.path.join("uploads", f"{company_name}_{file}")
             if not os.path.exists(file_path):
-                uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf", key=f"{file}_tab1")
+                with cols[i % 2]:
+                    uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf", key=f"{file}_tab1")
             else:
                 uploaded_files[file] = None  # File already exists
+
 
         if st.button("Upload Documents", key="upload_documents_tab1"):
             if company_name:
@@ -198,11 +201,14 @@ def main():
                     if os.path.exists(file_path):
                         zipf.write(file_path, file_name)
             with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download Uploaded Documents",
-                    data=zipf,
-                    file_name=f"{company_name}_uploads.zip"
-                )
+                cols = st.columns([1, 2, 1])
+                with cols[1]:
+                    st.download_button(
+                        label="Download Uploaded Documents",
+                        data=zipf,
+                        file_name=f"{company_name}_uploads.zip"
+                    )
+
 
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
@@ -303,12 +309,15 @@ def main():
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
-            with open(os.path.join("processed", f"{company_name}_gpt_tasks.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download GPT Task Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_gpt_tasks.zip"
-                )
+            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+                cols = st.columns([1, 2, 1])
+                with cols[1]:
+                    st.download_button(
+                        label="Download Uploaded Documents",
+                        data=zipf,
+                        file_name=f"{company_name}_uploads.zip"
+                    )
+
 
     with tab3:
         st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
@@ -389,12 +398,15 @@ def main():
                 file_path = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
                 if os.path.exists(file_path):
                     zipf.write(file_path, "top_150_keywords.csv")
-            with open(os.path.join("processed", f"{company_name}_csv_analysis.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download CSV Analysis Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_csv_analysis.zip"
-                )
+            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+                cols = st.columns([1, 2, 1])
+                with cols[1]:
+                    st.download_button(
+                        label="Download Uploaded Documents",
+                        data=zipf,
+                        file_name=f"{company_name}_uploads.zip"
+                    )
+
 
     with tab4:
         st.markdown("<h1 style='color:white;'>Step 4: Generate Website Content</h1>", unsafe_allow_html=True)
@@ -492,12 +504,15 @@ def main():
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
-            with open(os.path.join("processed", f"{company_name}_website_content.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download Website Content Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_website_content.zip"
-                )
+            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+                cols = st.columns([1, 2, 1])
+                with cols[1]:
+                    st.download_button(
+                        label="Download Uploaded Documents",
+                        data=zipf,
+                        file_name=f"{company_name}_uploads.zip"
+                    )
+
 
     with tab5:
         st.markdown("<h1 style='color:white;'>Step 5: Create Pillar Page</h1>", unsafe_allow_html=True)
@@ -591,12 +606,15 @@ def main():
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
-            with open(os.path.join("processed", f"{company_name}_pillar_page.zip"), "rb") as zipf:
-                st.download_button(
-                    label="Download Pillar Page Outputs",
-                    data=zipf,
-                    file_name=f"{company_name}_pillar_page.zip"
-                )
+            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+                cols = st.columns([1, 2, 1])
+                with cols[1]:
+                    st.download_button(
+                        label="Download Uploaded Documents",
+                        data=zipf,
+                        file_name=f"{company_name}_uploads.zip"
+                    )
+
 
     with tab6:
         st.markdown("<h1 style='color:white;'>Step 6: Download & Overwrite Files</h1>", unsafe_allow_html=True)
@@ -657,17 +675,19 @@ def login():
     st.markdown("<h1 style='color:white;'>Login</h1>", unsafe_allow_html=True)
     username = st.text_input("Username", key="login_username")
     password = st.text_input("Password", type="password", key="login_password")
-    if st.button("Login", key="login_button"):
-        if username in st.session_state['user_data']['usernames']:
-            index = st.session_state['user_data']['usernames'].index(username)
-            if bcrypt.checkpw(password.encode(), st.session_state['user_data']['passwords'][index]):
-                st.session_state['logged_in'] = True
-                st.session_state['username'] = username
-                st.experimental_rerun()  # Rerun the app after login
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Login", key="login_button"):
+            if username in st.session_state['user_data']['usernames']:
+                index = st.session_state['user_data']['usernames'].index(username)
+                if bcrypt.checkpw(password.encode(), st.session_state['user_data']['passwords'][index]):
+                    st.session_state['logged_in'] = True
+                    st.session_state['username'] = username
+                    st.experimental_rerun()  # Rerun the app after login
+                else:
+                    st.error("Incorrect password")
             else:
-                st.error("Incorrect password")
-        else:
-            st.error("Username not found")
+                st.error("Username not found")
 
 if __name__ == "__main__":
     if 'logged_in' not in st.session_state:
