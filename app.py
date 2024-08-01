@@ -122,7 +122,7 @@ st.markdown("""
     }
     .css-1l7r3cz, .css-1d391kg, .css-hxt7ib, .css-18e3th9, .css-1aehpv1, .css-2trqyj, .css-1v3fvcr, .css-1cpxqw2, .css-12oz5g7, .css-1v0mbdj {
         color: white !important;
-        background-color: transparent !important;
+        background-color: transparent ! important;
         border-radius: 10px;
     }
     .css-1g6gooi {
@@ -206,7 +206,8 @@ def main():
                     st.download_button(
                         label="Download Uploaded Documents",
                         data=zipf,
-                        file_name=f"{company_name}_uploads.zip"
+                        file_name=f"{company_name}_uploads.zip",
+                        key="download_documents_tab1"
                     )
 
 
@@ -305,17 +306,18 @@ def main():
         # Add download button for this tab's files
         if os.path.exists("processed"):
             with ZipFile(os.path.join("processed", f"{company_name}_gpt_tasks.zip"), "w") as zipf:
-                for file in ["buyer_persona.txt", "mission_values.txt", "seo_summarizer.txt", "seo_keywords.txt"]:
+                for file in ["buyer_persona.txt", "mission_values.txt", "seo_summarizer.txt", "seo_keywords.txt", "brand_voice.txt"]:
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
-            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+            with open(os.path.join("processed", f"{company_name}_gpt_tasks.zip"), "rb") as zipf:
                 cols = st.columns([1, 2, 1])
                 with cols[1]:
                     st.download_button(
-                        label="Download Uploaded Documents",
+                        label="Download GPT Task Outputs",
                         data=zipf,
-                        file_name=f"{company_name}_uploads.zip"
+                        file_name=f"{company_name}_gpt_tasks.zip",
+                        key="download_gpt_tasks_tab2"
                     )
 
 
@@ -398,13 +400,14 @@ def main():
                 file_path = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
                 if os.path.exists(file_path):
                     zipf.write(file_path, "top_150_keywords.csv")
-            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+            with open(os.path.join("processed", f"{company_name}_csv_analysis.zip"), "rb") as zipf:
                 cols = st.columns([1, 2, 1])
                 with cols[1]:
                     st.download_button(
-                        label="Download Uploaded Documents",
+                        label="Download CSV Analysis Outputs",
                         data=zipf,
-                        file_name=f"{company_name}_uploads.zip"
+                        file_name=f"{company_name}_csv_analysis.zip",
+                        key="download_csv_analysis_tab3"
                     )
 
 
@@ -500,17 +503,18 @@ def main():
         # Add download button for this tab's files
         if os.path.exists("processed"):
             with ZipFile(os.path.join("processed", f"{company_name}_website_content.zip"), "w") as zipf:
-                for file in ["topic_cluster_document.txt", "keywords.txt", "website_structure_document.txt", "brand_voice.txt", "home_page.txt", "home_page_final.txt", "about_us.txt", "about_us_final.txt"]:
+                for file in ["topic_cluster_document.txt", "keywords.txt", "website_structure_document.txt", "home_page.txt", "home_page_final.txt", "about_us.txt", "about_us_final.txt"]:
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
-            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+            with open(os.path.join("processed", f"{company_name}_website_content.zip"), "rb") as zipf:
                 cols = st.columns([1, 2, 1])
                 with cols[1]:
                     st.download_button(
-                        label="Download Uploaded Documents",
+                        label="Download Website Content Outputs",
                         data=zipf,
-                        file_name=f"{company_name}_uploads.zip"
+                        file_name=f"{company_name}_website_content.zip",
+                        key="download_website_content_tab4"
                     )
 
 
@@ -606,13 +610,14 @@ def main():
                     file_path = os.path.join("processed", f"{company_name}_{file}")
                     if os.path.exists(file_path):
                         zipf.write(file_path, file)
-            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+            with open(os.path.join("processed", f"{company_name}_pillar_page.zip"), "rb") as zipf:
                 cols = st.columns([1, 2, 1])
                 with cols[1]:
                     st.download_button(
-                        label="Download Uploaded Documents",
+                        label="Download Pillar Page Outputs",
                         data=zipf,
-                        file_name=f"{company_name}_uploads.zip"
+                        file_name=f"{company_name}_pillar_page.zip",
+                        key="download_pillar_page_tab5"
                     )
 
 
@@ -656,7 +661,8 @@ def main():
                         st.download_button(
                             label=f"Download {selected_file}",
                             data=f,
-                            file_name=selected_file
+                            file_name=selected_file,
+                            key=f"download_{selected_file}_tab6"
                         )
 
                     # Upload button to re-upload the downloaded file
@@ -687,7 +693,7 @@ def login():
                 else:
                     st.error("Incorrect password")
             else:
-                st.error("Username not found")
+                    st.error("Username not found")
 
 if __name__ == "__main__":
     if 'logged_in' not in st.session_state:
