@@ -66,9 +66,7 @@ if 'user_data' not in st.session_state:
 
 def add_user():
     predefined_users = {
-        "bm1961": "Charlotte-182",
-        "sam2": "54321"
-    }
+        "bm1961": "Charlotte-182"}
 
     for username, password in predefined_users.items():
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
@@ -81,6 +79,7 @@ page_bg_img, logo_html = get_page_bg_and_logo_styles()
 # Apply CSS and HTML
 st.markdown(page_bg_img, unsafe_allow_html=True)
 st.markdown(logo_html, unsafe_allow_html=True)
+
 st.markdown("""
 <style>
     .stTabs [data-baseweb="tab-list"] {
@@ -133,9 +132,11 @@ st.markdown("""
         color: white !important;
     }
     .stDownloadButton > button {
-        color: black !important;
+        color: white !important;
     }
-</style>""", unsafe_allow_html=True)
+</style>
+""", unsafe_allow_html=True)
+
 
 def main():
     st.title("Document Analysis and Processing")
