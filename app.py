@@ -155,7 +155,7 @@ def main():
 
     with tab1:
        with tab1:
-        st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color:white;'>Step 1: Upload Files</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p>In this step, you need to upload the workshop documents for analysis.</p>
             <p>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
