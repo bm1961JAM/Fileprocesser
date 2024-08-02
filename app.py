@@ -222,7 +222,7 @@ def main():
                     data=zipf,
                     file_name=f"{company_name}_uploads.zip"
                 )
-                    )
+                    
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
         st.markdown("""
