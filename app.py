@@ -154,12 +154,13 @@ def main():
     ])
 
     with tab1:
-        st.markdown("<h1 style='color:white;'>Step 1: Upload Required Documents</h1>", unsafe_allow_html=True)
+       with tab1:
+        st.header("Step 1: Upload Required Documents")
         st.markdown("""
-            <p style='color:black;'>In this step, you need to upload the workshop documents for analysis.</p>
-            <p style='color:black;'>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
+            <p>In this step, you need to upload the workshop documents for analysis.</p>
+            <p>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
         """, unsafe_allow_html=True)
-        company_name = st.text_input("Specify the company name", key="company_name_tab1")
+        company_name = st.text_input("Specify the company name")
 
         required_files = [
             "product_list.pdf",
@@ -170,34 +171,30 @@ def main():
         ]
 
         uploaded_files = {}
-        cols = st.columns(2)
-        for i, file in enumerate(required_files):
+        for file in required_files:
             file_path = os.path.join("uploads", f"{company_name}_{file}")
             if not os.path.exists(file_path):
-                with cols[i % 2]:
-                    uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf", key=f"{file}_tab1")
+                uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf")
             else:
                 uploaded_files[file] = None  # File already exists
 
-        cols = st.columns([1, 2, 1])
-        with cols[1]:
-            if st.button("Upload Documents", key="upload_documents_tab1"):
-                if company_name:
-                    all_files_uploaded = True
-                    for file_name, uploaded_file in uploaded_files.items():
-                        if uploaded_file is not None:
-                            with open(os.path.join("uploads", f"{company_name}_{file_name}"), "wb") as f:
-                                f.write(uploaded_file.getbuffer())
-                        elif not os.path.exists(os.path.join("uploads", f"{company_name}_{file_name}")):
-                            all_files_uploaded = False
-                            st.error(f"File {file_name} not found. Please upload it.")
+        if st.button("Upload Documents"):
+            if company_name:
+                all_files_uploaded = True
+                for file_name, uploaded_file in uploaded_files.items():
+                    if uploaded_file is not None:
+                        with open(os.path.join("uploads", f"{company_name}_{file_name}"), "wb") as f:
+                            f.write(uploaded_file.getbuffer())
+                    elif not os.path.exists(os.path.join("uploads", f"{company_name}_{file_name}")):
+                        all_files_uploaded = False
+                        st.error(f"File {file_name} not found. Please upload it.")
 
-                    if all_files_uploaded:
-                        st.success("Files uploaded successfully!")
-                    else:
-                        st.error("Please upload all required documents.")
+                if all_files_uploaded:
+                    st.success("Files uploaded successfully!")
                 else:
-                    st.error("Please specify the company name.")
+                    st.error("Please upload all required documents.")
+            else:
+                st.error("Please specify the company name.")
 
         # Add download button for this tab's files
         if os.path.exists("uploads"):
@@ -207,13 +204,11 @@ def main():
                     if os.path.exists(file_path):
                         zipf.write(file_path, file_name)
             with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
-                cols = st.columns([1, 2, 1])
-                with cols[1]:
-                    st.download_button(
-                        label="Download Uploaded Documents",
-                        data=zipf,
-                        file_name=f"{company_name}_uploads.zip"
-                    )
+                st.download_button(
+                    label="Download Uploaded Documents",
+                    data=zipf,
+                    file_name=f"{company_name}_uploads.zip"
+                )
 
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
