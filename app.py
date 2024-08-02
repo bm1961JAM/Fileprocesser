@@ -192,7 +192,7 @@ def main():
         st.session_state.uploaded_files.update(uploaded_files)
         
         if st.button("Upload Documents"):
-            all_files_uploaded = True  # Ensure this variable is defined before use
+            all_files_uploaded = True  
             if company_name:
                 for file_name, uploaded_file in st.session_state.uploaded_files.items():
                     if uploaded_file is not None:
