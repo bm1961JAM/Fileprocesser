@@ -153,63 +153,66 @@ def main():
         "Download & Overwrite Files"
     ])
 
-    with tab1:
-       with tab1:
-        st.markdown("<h1 style='color:white;'>Step 1: Upload Files</h1>", unsafe_allow_html=True)
-        st.markdown("""
-            <p>In this step, you need to upload the workshop documents for analysis.</p>
-            <p>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
-        """, unsafe_allow_html=True)
-        company_name = st.text_input("Specify the company name")
+with tab1:
+    st.markdown("<h1 style='color:white;'>Step 1: Upload Files</h1>", unsafe_allow_html=True)
+    st.markdown("""
+        <p>In this step, you need to upload the workshop documents for analysis.</p>
+        <p>The system will save the uploaded documents for further processing in the subsequent steps as inputs for the model.</p>
+    """, unsafe_allow_html=True)
+    
+    company_name = st.text_input("Specify the company name")
 
-        required_files = [
-            "product_list.pdf",
-            "USP.pdf",
-            "key_stats.pdf",
-            "about_us.pdf",
-            "colour_scheme.pdf"
-        ]
+    required_files = [
+        "product_list.pdf",
+        "USP.pdf",
+        "key_stats.pdf",
+        "about_us.pdf",
+        "colour_scheme.pdf"
+    ]
 
-        uploaded_files = {}
-        for file in required_files:
-            file_path = os.path.join("uploads", f"{company_name}_{file}")
-            if not os.path.exists(file_path):
-                uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf")
-            else:
-                uploaded_files[file] = None  # File already exists
+    uploaded_files = {}
+    for file in required_files:
+        file_path = os.path.join("uploads", f"{company_name}_{file}")
+        if not os.path.exists(file_path):
+            uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf", key=file)
+        else:
+            st.write(f"{file} already uploaded.")
 
-        if st.button("Upload Documents"):
-            if company_name:
-                all_files_uploaded = True
-                for file_name, uploaded_file in uploaded_files.items():
-                    if uploaded_file is not None:
-                        with open(os.path.join("uploads", f"{company_name}_{file_name}"), "wb") as f:
-                            f.write(uploaded_file.getbuffer())
-                    elif not os.path.exists(os.path.join("uploads", f"{company_name}_{file_name}")):
-                        all_files_uploaded = False
-                        st.error(f"File {file_name} not found. Please upload it.")
-
-                if all_files_uploaded:
-                    st.success("Files uploaded successfully!")
-                else:
-                    st.error("Please upload all required documents.")
-            else:
-                st.error("Please specify the company name.")
-
-        # Add download button for this tab's files
-        if os.path.exists("uploads"):
-            with ZipFile(os.path.join("processed", f"{company_name}_uploads.zip"), "w") as zipf:
-                for file_name in required_files:
+    if st.button("Upload Documents"):
+        if company_name:
+            all_files_uploaded = True
+            for file_name, uploaded_file in uploaded_files.items():
+                if uploaded_file is not None:
                     file_path = os.path.join("uploads", f"{company_name}_{file_name}")
-                    if os.path.exists(file_path):
-                        zipf.write(file_path, file_name)
-            with open(os.path.join("processed", f"{company_name}_uploads.zip"), "rb") as zipf:
+                    with open(file_path, "wb") as f:
+                        f.write(uploaded_file.getbuffer())
+                elif not os.path.exists(os.path.join("uploads", f"{company_name}_{file_name}")):
+                    all_files_uploaded = False
+                    st.error(f"File {file_name} not found. Please upload it.")
+
+            if all_files_uploaded:
+                st.success("Files uploaded successfully!")
+            else:
+                st.error("Please upload all required documents.")
+        else:
+            st.error("Please specify the company name.")
+
+    # Add download button for this tab's files
+    if os.path.exists("uploads") and company_name:
+        zip_file_path = os.path.join("processed", f"{company_name}_uploads.zip")
+        with ZipFile(zip_file_path, "w") as zipf:
+            for file_name in required_files:
+                file_path = os.path.join("uploads", f"{company_name}_{file_name}")
+                if os.path.exists(file_path):
+                    zipf.write(file_path, file_name)
+        
+        if os.path.exists(zip_file_path):
+            with open(zip_file_path, "rb") as zipf:
                 st.download_button(
                     label="Download Uploaded Documents",
                     data=zipf,
                     file_name=f"{company_name}_uploads.zip"
                 )
-
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
         st.markdown("""
