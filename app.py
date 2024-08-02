@@ -152,9 +152,7 @@ def main():
         "Create Pillar Page", 
         "Download & Overwrite Files"
     ])
-# Create necessary directories
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("processed", exist_ok=True)
+
     with tab1:
        with tab1:
         st.markdown("<h1 style='color:white;'>Step 1: Upload Files</h1>", unsafe_allow_html=True)
