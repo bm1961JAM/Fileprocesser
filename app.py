@@ -142,6 +142,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def main():
+    
     st.markdown("<h1 style='color:white;'>Document Analysis and Processing</h1>", unsafe_allow_html=True)
     # Tabs: Upload documents and specify company name, Run GPT Tasks, Upload CSV Files, Download Specific Outputs, Upload Pillar Page
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
@@ -153,7 +154,7 @@ def main():
         "Download & Overwrite Files"
     ])
 
-    # Initialize session state for company_name and uploaded_files
+        # Initialize session state for company_name and uploaded_files
     if 'company_name' not in st.session_state:
         st.session_state.company_name = ''
     
@@ -191,8 +192,8 @@ def main():
         st.session_state.uploaded_files.update(uploaded_files)
         
         if st.button("Upload Documents"):
+            all_files_uploaded = True  # Ensure this variable is defined before use
             if company_name:
-                all_files_uploaded = True
                 for file_name, uploaded_file in st.session_state.uploaded_files.items():
                     if uploaded_file is not None:
                         with open(os.path.join("uploads", f"{company_name}_{file_name}"), "wb") as f:
@@ -209,7 +210,7 @@ def main():
                 st.error("Please specify the company name.")
     
         # Add download button for this tab's files
-        if os.path.exists("uploads") and all_files_uploaded:
+        if os.path.exists("uploads"):
             zip_path = os.path.join("processed", f"{company_name}_uploads.zip")
             with ZipFile(zip_path, "w") as zipf:
                 for file_name in required_files:
@@ -222,7 +223,7 @@ def main():
                     data=zipf,
                     file_name=f"{company_name}_uploads.zip"
                 )
-                    
+                        
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
         st.markdown("""
