@@ -372,15 +372,23 @@ def main():
                         # Data cleaning
                         combined_df['Volume'] = pd.to_numeric(combined_df['Volume'], errors='coerce').fillna(0)
                         combined_df['Keyword Difficulty'] = pd.to_numeric(combined_df['Keyword Difficulty'], errors='coerce').fillna(100)
-                        combined_df['CPC (GBP)'] = pd.to_numeric(combined_df['CPC (GBP)'], errors='coerce').fillna(0)
-
+                        
+                        # Handle CPC column dynamically for GBP or USD
+                        if 'CPC (GBP)' in combined_df.columns:
+                            combined_df['CPC'] = pd.to_numeric(combined_df['CPC (GBP)'], errors='coerce').fillna(0)
+                        elif 'CPC (USD)' in combined_df.columns:
+                            combined_df['CPC'] = pd.to_numeric(combined_df['CPC (USD)'], errors='coerce').fillna(0)
+                        else:
+                            combined_df['CPC'] = 0  # default if neither column is present
+                        
                         # Filter and score
                         combined_df = combined_df[(combined_df['Volume'] >= 20) | 
-                                                (combined_df['CPC (GBP)'] >= 0.35) | 
-                                                ((combined_df['Keyword Difficulty'] <= 50) & 
-                                                (combined_df['Keyword Difficulty'] >= 10)) | 
-                                                (combined_df['Keyword Difficulty'].isna())]
-                        combined_df['Score'] = np.log(combined_df['Volume']) / combined_df['CPC (GBP)']
+                                                  (combined_df['CPC'] >= 0.35) | 
+                                                  ((combined_df['Keyword Difficulty'] <= 50) & 
+                                                   (combined_df['Keyword Difficulty'] >= 10)) | 
+                                                  (combined_df['Keyword Difficulty'].isna())]
+                        combined_df['Score'] = np.log(combined_df['Volume']) / combined_df['CPC']
+
 
                         # Select top 150 keywords
                         top_keywords_list = []
