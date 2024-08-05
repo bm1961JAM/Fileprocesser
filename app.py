@@ -470,7 +470,7 @@ def main():
                         f.write(topic_cluster_document)
 
                     
-                    prompt_english_topic_cluster= prompts["prompt_topic_cluster"].format(file_name=f"{company_name}_home_page.txt", file_content=topic_cluster_document)
+                    prompt_english_topic_cluster= prompts["prompt_topic_cluster"].format(file_name=f"{company_name}_topic_cluster_document.txt", file_content=topic_cluster_document)
                     home_page_final = run_gpt_task(instructions["english_editor"], prompt_english_topic_cluster)
                     with open(os.path.join("processed", f"{company_name}_topic_cluster_document.txt"), "w") as f:
                         f.write(topic_cluster_document)
