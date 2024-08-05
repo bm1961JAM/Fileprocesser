@@ -469,6 +469,13 @@ def main():
                     with open(os.path.join("processed", f"{company_name}_topic_cluster_document.txt"), "w") as f:
                         f.write(topic_cluster_document)
 
+                    
+                    prompt_english_topic_cluster= prompts["prompt_topic_cluster"].format(file_name=f"{company_name}_home_page.txt", file_content=topic_cluster_document)
+                    home_page_final = run_gpt_task(instructions["english_editor"], prompt_english_topic_cluster)
+                    with open(os.path.join("processed", f"{company_name}_topic_cluster_document.txt"), "w") as f:
+                        f.write(topic_cluster_document)
+
+                    
                     prompt_extract_keywords = prompts["prompt_extract_keywords"].format(topic_cluster_document=topic_cluster_document)
                     keywords = run_gpt_task(instructions["editor"], prompt_extract_keywords)
                     with open(os.path.join("processed", f"{company_name}_keywords.txt"), "w") as f:
