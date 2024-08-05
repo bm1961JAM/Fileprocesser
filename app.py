@@ -470,26 +470,10 @@ def main():
                         f.write(topic_cluster_document)
 
                     
-                    prompt_english_topic_cluster= prompts["prompt_topic_cluster"].format(file_name=f"{company_name}_topic_cluster_document.txt", file_content=topic_cluster_document)
+                    prompt_english_topic_cluster= prompts["prompt_english_editor"].format(file_name=f"{company_name}_topic_cluster_document.txt", file_content=topic_cluster_document)
                     topic_cluster_document = run_gpt_task(instructions["english_editor"], prompt_english_topic_cluster)
                     with open(os.path.join("processed", f"{company_name}_topic_cluster_document.txt"), "w") as f:
                         f.write(topic_cluster_document)
-
-                    prompt_home_page = prompts["prompt_home_page"].format(company_name=company_name, product_list=product_list_text, USP=USP_text, key_stats=key_stats_text, about_us=about_us_text, brand_voice_text=brand_voice_text, keywords=keywords)
-                    home_page_document = run_gpt_task(instructions["home_page"], prompt_home_page)
-                    with open(os.path.join("processed", f"{company_name}_home_page.txt"), "w") as f:
-                        f.write(home_page_document)
-
-                    prompt_english_editor_home = prompts["prompt_english_editor"].format(file_name=f"{company_name}_home_page.txt", file_content=home_page_document)
-                    home_page_final = run_gpt_task(instructions["english_editor"], prompt_english_editor_home)
-                    with open(os.path.join("processed", f"{company_name}_home_page_final.txt"), "w") as f:
-                        f.write(home_page_final)
-
-
-
-
-
-
                     
                     prompt_extract_keywords = prompts["prompt_extract_keywords"].format(topic_cluster_document=topic_cluster_document)
                     keywords = run_gpt_task(instructions["editor"], prompt_extract_keywords)
