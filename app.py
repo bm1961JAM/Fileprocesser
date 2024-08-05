@@ -182,11 +182,7 @@ def main():
     
         uploaded_files = {}
         for file in required_files:
-            file_path = os.path.join("uploads", f"{company_name}_{file}")
-            if not os.path.exists(file_path):
-                uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf", key=file)
-            else:
-                uploaded_files[file] = None  # File already exists
+            uploaded_files[file] = st.file_uploader(f"Upload {file}", type="pdf", key=file)
         
         # Update session state with uploaded files
         st.session_state.uploaded_files.update(uploaded_files)
@@ -198,7 +194,7 @@ def main():
                     if uploaded_file is not None:
                         with open(os.path.join("uploads", f"{company_name}_{file_name}"), "wb") as f:
                             f.write(uploaded_file.getbuffer())
-                    elif not os.path.exists(os.path.join("uploads", f"{company_name}_{file_name}")):
+                    else:
                         all_files_uploaded = False
                         st.error(f"File {file_name} not found. Please upload it.")
     
@@ -223,6 +219,7 @@ def main():
                     data=zipf,
                     file_name=f"{company_name}_uploads.zip"
                 )
+
                         
     with tab2:
         st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
