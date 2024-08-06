@@ -143,11 +143,11 @@ st.markdown("""
 
 def main():
     
-    st.markdown("<h1 style='color:white;'>Document Analysis and Processing</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color:white;'>Build The Brand</h1>", unsafe_allow_html=True)
     # Tabs: Upload documents and specify company name, Run GPT Tasks, Upload CSV Files, Download Specific Outputs, Upload Pillar Page
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "Upload Required Documents", 
-        "Execute GPT Tasks", 
+        "Prep Docs", 
         "Process and Analyze CSV Files", 
         "Generate Website Content", 
         "Create Pillar Page", 
@@ -222,7 +222,7 @@ def main():
 
                         
     with tab2:
-        st.markdown("<h1 style='color:white;'>Step 2: Execute GPT Tasks</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color:white;'>Step 2: Prep Docs</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p style='color:black;'>In this step, you will run GPT tasks to process the uploaded documents. </p>
             <p style='color:black;'>Outcome: The system will then generate outputs such as buyer persona, mission statement, brand voice, SEO summaries, and keywords for further research.</p>
