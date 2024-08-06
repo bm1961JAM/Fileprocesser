@@ -222,7 +222,7 @@ def main():
 
                         
     with tab2:
-        st.markdown("<h1 style='color:white;'>Step 2: Prep Docs</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color:white;'>Step 2: Build the Prep Docs</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p style='color:black;'>In this step, you will run GPT tasks to process the uploaded documents. </p>
             <p style='color:black;'>Outcome: The system will then generate outputs such as buyer persona, mission statement, brand voice, SEO summaries, and keywords for further research.</p>
