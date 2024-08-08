@@ -333,6 +333,58 @@ def main():
                         file_name=f"{company_name}_gpt_tasks.zip"
                     )
 
+    import os
+    import pandas as pd
+    from zipfile import ZipFile
+    from sklearn.preprocessing import MinMaxScaler
+    import streamlit as st
+    
+    def process_google_data(file_path, company_name):
+        # Define fixed thresholds
+        competition_threshold = 80
+        search_volume_threshold = 50
+        bid_threshold = 1
+    
+        # Read the CSV file
+        data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
+    
+        # Convert columns to numeric types and handle missing values
+        data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
+        data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
+        data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
+    
+        # Filter out highly competitive keywords and those not worth pursuing
+        data = data[(data['Competition (indexed value)'] <= competition_threshold) &
+                    (data['Avg. monthly searches'] >= search_volume_threshold) &
+                    (data['Top of page bid (high range)'] >= bid_threshold)]
+    
+        # Normalize the relevant columns
+        scaler = MinMaxScaler()
+        relevant_columns = ['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']
+        data[relevant_columns] = scaler.fit_transform(data[relevant_columns].fillna(0))
+    
+        # Define weights for each factor (adjust as needed)
+        weights = {
+            'Avg. monthly searches': 0.5,
+            'Competition (indexed value)': 0.3,
+            'Top of page bid (high range)': 0.2
+        }
+    
+        # Calculate the combined score
+        data['Score'] = (
+            data['Avg. monthly searches'] * weights['Avg. monthly searches'] +
+            data['Competition (indexed value)'] * weights['Competition (indexed value)'] +
+            data['Top of page bid (high range)'] * weights['Top of page bid (high range)']
+        )
+    
+        # Sort the keywords by the combined score in descending order
+        sorted_keywords = data.sort_values(by='Score', ascending=False)
+    
+        # Select the top 50 keywords
+        top_keywords = sorted_keywords.head(50)[['Keyword', 'Score']]
+    
+        return top_keywords
+    
     with tab3:
         st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
         st.markdown("""
@@ -356,38 +408,27 @@ def main():
                         csv_file_paths.append(file_path)
     
                     if csv_file_paths:
-                        def process_google_data(file_path, company_name):
-                            # Read the CSV file
-                            data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
-                            
-                            # Convert columns to numeric types and handle missing values
-                            data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
-                            data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
-                            data['Top of page bid (low range)'] = pd.to_numeric(data['Top of page bid (low range)'], errors='coerce').fillna(0)
-                            data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
-                            
-                            # Calculate CPC
-                            data['CPC'] = (data['Top of page bid (low range)'] + data['Top of page bid (high range)']) / 2
-                            
-                            # Filter the data
-                            filtered_data = data[(data['Avg. monthly searches'] >= 50) | 
-                                                 (data['CPC'] >= 5)]
-                            
-                            # Calculate the score
-                            filtered_data['Score'] = (filtered_data['Avg. monthly searches'] / (filtered_data['CPC'] + 1e-5)) / filtered_data['Competition (indexed value)']
-                            
-                            # Select the top 50 keywords by score
-                            top_keywords = filtered_data.nlargest(50, 'Score')['Keyword']
-                            
-                            # Save the results to a new CSV file
-                            output_file = os.path.join("processed", f"{company_name}_top_50_keywords.csv")
-                            os.makedirs("processed", exist_ok=True)
-                            top_keywords.to_csv(output_file, index=False)
-                            
-                            return top_keywords
-    
+                        all_top_keywords = pd.DataFrame(columns=['Keyword', 'Score', 'Source'])
                         for file_path in csv_file_paths:
                             top_keywords = process_google_data(file_path, company_name)
+                            top_keywords['Source'] = file_path
+                            all_top_keywords = all_top_keywords.append(top_keywords, ignore_index=True)
+    
+                        # Sort all keywords by score
+                        all_top_keywords = all_top_keywords.sort_values(by='Score', ascending=False)
+    
+                        # Limit to top 150 keywords while ensuring no more than 35 per source
+                        final_top_keywords = pd.DataFrame(columns=['Keyword', 'Score'])
+                        for source in all_top_keywords['Source'].unique():
+                            source_keywords = all_top_keywords[all_top_keywords['Source'] == source]
+                            final_top_keywords = final_top_keywords.append(source_keywords.head(35), ignore_index=True)
+    
+                        final_top_keywords = final_top_keywords.head(150)
+    
+                        # Save the final results to a new CSV file
+                        final_output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
+                        os.makedirs("processed", exist_ok=True)
+                        final_top_keywords[['Keyword', 'Score']].to_csv(final_output_file, index=False)
     
                         st.success("CSV files processed and top 150 keywords saved!")
                     else:
@@ -409,8 +450,7 @@ def main():
                         data=zipf,
                         file_name=f"{company_name}_csv_analysis.zip"
                     )
-    
-    
+
 
 
     
