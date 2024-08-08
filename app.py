@@ -357,19 +357,33 @@ def main():
     
                     if csv_file_paths:
                         def process_google_data(file_path, company_name):
+                            # Read the CSV file
                             data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
+                            
+                            # Convert columns to numeric types and handle missing values
                             data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
                             data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
                             data['Top of page bid (low range)'] = pd.to_numeric(data['Top of page bid (low range)'], errors='coerce').fillna(0)
                             data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
+                            
+                            # Calculate CPC
                             data['CPC'] = (data['Top of page bid (low range)'] + data['Top of page bid (high range)']) / 2
+                            
+                            # Filter the data
                             filtered_data = data[(data['Avg. monthly searches'] >= 50) | 
-                                                 (data['CPC'] >= 5)  ]
-                            filtered_data['Score'] = (filtered_data['Avg. monthly searches']  / (filtered_data['CPC'] + 1e-5))/ filtered_data['Competition (indexed value)']
-                            top_keywords = filtered_data.nlargest(500, 'Score')['Keyword']
-                            output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
+                                                 (data['CPC'] >= 5)]
+                            
+                            # Calculate the score
+                            filtered_data['Score'] = (filtered_data['Avg. monthly searches'] / (filtered_data['CPC'] + 1e-5)) / filtered_data['Competition (indexed value)']
+                            
+                            # Select the top 50 keywords by score
+                            top_keywords = filtered_data.nlargest(50, 'Score')['Keyword']
+                            
+                            # Save the results to a new CSV file
+                            output_file = os.path.join("processed", f"{company_name}_top_50_keywords.csv")
                             os.makedirs("processed", exist_ok=True)
                             top_keywords.to_csv(output_file, index=False)
+                            
                             return top_keywords
     
                         for file_path in csv_file_paths:
