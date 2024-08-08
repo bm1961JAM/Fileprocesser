@@ -333,45 +333,6 @@ def main():
                         file_name=f"{company_name}_gpt_tasks.zip"
                     )
 
-def process_google_data(file_path, company_name):
-    try:
-        # Load the data
-        data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
-        
-        # Data cleaning
-        data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
-        data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
-        
-        # Handle CPC columns
-        data['Top of page bid (low range)'] = pd.to_numeric(data['Top of page bid (low range)'], errors='coerce').fillna(0)
-        data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
-        
-        # Use the average of low and high range bids for CPC
-        data['CPC'] = (data['Top of page bid (low range)'] + data['Top of page bid (high range)']) / 2
-        
-        # Filtering
-        filtered_data = data[(data['Avg. monthly searches'] >= 20) | 
-                             (data['CPC'] >= 0.35) | 
-                             ((data['Competition (indexed value)'] <= 50) & 
-                              (data['Competition (indexed value)'] >= 10)) | 
-                             (data['Competition (indexed value)'].isna())]
-        
-        # Scoring
-        filtered_data['Score'] = np.log(filtered_data['Avg. monthly searches'] + 1) / (filtered_data['CPC'] + 1e-5)
-        
-        # Select top 150 keywords
-        top_keywords = filtered_data.nlargest(150, 'Score')['Keyword']
-        
-        # Save the top keywords
-        output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
-        os.makedirs("processed", exist_ok=True)
-        top_keywords.to_csv(output_file, index=False)
-        
-        return top_keywords
-    except Exception as e:
-        st.error(f"An error occurred while processing the file: {e}")
-        return None
-
 with tab3:
     st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
     st.markdown("""
@@ -388,7 +349,6 @@ with tab3:
         if st.button("Process CSV Files", key="process_csv_files_tab3"):
             if company_name:
                 csv_file_paths = []
-                os.makedirs("uploads", exist_ok=True)
                 for i, file in enumerate(csv_files):
                     file_path = os.path.join("uploads", f"{company_name}_csv_file_{i + 1}.csv")
                     with open(file_path, "wb") as f:
@@ -396,17 +356,35 @@ with tab3:
                     csv_file_paths.append(file_path)
 
                 if csv_file_paths:
+                    def process_google_data(file_path, company_name):
+                        data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
+                        data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
+                        data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
+                        data['Top of page bid (low range)'] = pd.to_numeric(data['Top of page bid (low range)'], errors='coerce').fillna(0)
+                        data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
+                        data['CPC'] = (data['Top of page bid (low range)'] + data['Top of page bid (high range)']) / 2
+                        filtered_data = data[(data['Avg. monthly searches'] >= 20) | 
+                                             (data['CPC'] >= 0.35) | 
+                                             ((data['Competition (indexed value)'] <= 50) & 
+                                              (data['Competition (indexed value)'] >= 10)) | 
+                                             (data['Competition (indexed value)'].isna())]
+                        filtered_data['Score'] = np.log(filtered_data['Avg. monthly searches'] + 1) / (filtered_data['CPC'] + 1e-5)
+                        top_keywords = filtered_data.nlargest(150, 'Score')['Keyword']
+                        output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
+                        os.makedirs("processed", exist_ok=True)
+                        top_keywords.to_csv(output_file, index=False)
+                        return top_keywords
+
                     for file_path in csv_file_paths:
                         top_keywords = process_google_data(file_path, company_name)
-                        if top_keywords is not None:
-                            st.success("CSV files processed and top 150 keywords saved!")
-                        else:
-                            st.error("Failed to process some CSV files.")
+
+                    st.success("CSV files processed and top 150 keywords saved!")
                 else:
                     st.error("No CSV files found.")
             else:
                 st.error("Please specify the company name in the first tab.")
 
+    # Add download button for this tab's files
     if os.path.exists("processed"):
         with ZipFile(os.path.join("processed", f"{company_name}_csv_analysis.zip"), "w") as zipf:
             file_path = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
