@@ -363,13 +363,10 @@ def main():
                             data['Top of page bid (low range)'] = pd.to_numeric(data['Top of page bid (low range)'], errors='coerce').fillna(0)
                             data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
                             data['CPC'] = (data['Top of page bid (low range)'] + data['Top of page bid (high range)']) / 2
-                            filtered_data = data[(data['Avg. monthly searches'] >= 20) | 
-                                                 (data['CPC'] >= 0.35) | 
-                                                 ((data['Competition (indexed value)'] <= 50) & 
-                                                  (data['Competition (indexed value)'] >= 10)) | 
-                                                 (data['Competition (indexed value)'].isna())]
+                            filtered_data = data[(data['Avg. monthly searches'] >= 50) | 
+                                                 (data['CPC'] >= 5)  ]
                             filtered_data['Score'] = np.log(filtered_data['Avg. monthly searches'] + 1) / (filtered_data['CPC'] + 1e-5)
-                            top_keywords = filtered_data.nlargest(150, 'Score')['Keyword']
+                            top_keywords = filtered_data.nlargest(500, 'Score')['Keyword']
                             output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
                             os.makedirs("processed", exist_ok=True)
                             top_keywords.to_csv(output_file, index=False)
