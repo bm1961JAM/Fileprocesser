@@ -365,7 +365,7 @@ def main():
                             data['CPC'] = (data['Top of page bid (low range)'] + data['Top of page bid (high range)']) / 2
                             filtered_data = data[(data['Avg. monthly searches'] >= 50) | 
                                                  (data['CPC'] >= 5)  ]
-                            filtered_data['Score'] = np.log(filtered_data['Avg. monthly searches'] + 1) / (filtered_data['CPC'] + 1e-5)
+                            filtered_data['Score'] = (filtered_data['Avg. monthly searches']  / (filtered_data['CPC'] + 1e-5))/ filtered_data['Competition (indexed value)']
                             top_keywords = filtered_data.nlargest(500, 'Score')['Keyword']
                             output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
                             os.makedirs("processed", exist_ok=True)
