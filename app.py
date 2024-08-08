@@ -381,7 +381,7 @@ def main():
         sorted_keywords = data.sort_values(by='Score', ascending=False)
     
         # Select the top 50 keywords
-        top_keywords = sorted_keywords.head(50)[['Keyword', 'Score']]
+        top_keywords = sorted_keywords.head(50)
     
         return top_keywords
     
@@ -418,7 +418,7 @@ def main():
                         all_top_keywords = all_top_keywords.sort_values(by='Score', ascending=False)
     
                         # Limit to top 150 keywords while ensuring no more than 35 per source
-                        final_top_keywords = pd.DataFrame(columns=['Keyword', 'Score'])
+                        final_top_keywords = all_top_keywords
                         for source in all_top_keywords['Source'].unique():
                             source_keywords = all_top_keywords[all_top_keywords['Source'] == source]
                             final_top_keywords = final_top_keywords.append(source_keywords.head(35), ignore_index=True)
@@ -428,7 +428,7 @@ def main():
                         # Save the final results to a new CSV file
                         final_output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
                         os.makedirs("processed", exist_ok=True)
-                        final_top_keywords[['Keyword', 'Score']].to_csv(final_output_file, index=False)
+                        final_top_keywords.to_csv(final_output_file, index=False)
     
                         st.success("CSV files processed and top 150 keywords saved!")
                     else:
