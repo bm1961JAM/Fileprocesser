@@ -364,8 +364,7 @@ def main():
                         (data['Avg. monthly searches'] >= search_volume_threshold) &
                         (data['Top of page bid (high range)'] >= bid_threshold)]
         
-            # Log transform Avg. monthly searches
-            data['Avg. monthly searches'] = np.log(data['Avg. monthly searches'] + 1)
+
         
             # Initialize Min-Max Scaler
             scaler = MinMaxScaler()
@@ -376,9 +375,9 @@ def main():
         
             # Define weights for each factor (adjust as needed)
             weights = {
-                'Avg. monthly searches': 0.5,
-                'Competition (indexed value)': 0.3,
-                'Top of page bid (high range)': 0.2
+                'Avg. monthly searches': 0.3,
+                'Competition (indexed value)': 0.4,
+                'Top of page bid (high range)': 0.3
             }
         
             # Calculate the combined score using the scaled values
