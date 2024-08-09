@@ -364,6 +364,16 @@ def main():
                         (data['Avg. monthly searches'] >= search_volume_threshold) &
                         (data['Top of page bid (high range)'] >= bid_threshold)]
         
+            # Log transform Avg. monthly searches
+            data['Avg. monthly searches'] = np.log(data['Avg. monthly searches'] + 1)
+        
+            # Initialize Min-Max Scaler
+            scaler = MinMaxScaler()
+        
+            # Normalize each feature using Min-Max scaling
+            data[['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']] = scaler.fit_transform(
+                data[['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']])
+        
             # Define weights for each factor (adjust as needed)
             weights = {
                 'Avg. monthly searches': 0.5,
@@ -371,7 +381,7 @@ def main():
                 'Top of page bid (high range)': 0.2
             }
         
-            # Calculate the combined score using the original (unscaled) values
+            # Calculate the combined score using the scaled values
             data['Score'] = (
                 data['Avg. monthly searches'] * weights['Avg. monthly searches'] +
                 data['Competition (indexed value)'] * weights['Competition (indexed value)'] +
@@ -381,10 +391,11 @@ def main():
             # Sort the keywords by the combined score in descending order
             sorted_keywords = data.sort_values(by='Score', ascending=False)
         
-            # Select the top 50 keywords
+            # Select the top 150 keywords
             top_keywords = sorted_keywords.head(150)['Keyword']
         
             return top_keywords
+
         st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p style='color:black;'>In this step, you need to upload CSV files for processing and analysis. The system will analyze the CSV files and generate a list of top 150 keywords based on various criteria.</p>
