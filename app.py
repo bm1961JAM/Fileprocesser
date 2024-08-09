@@ -364,11 +364,6 @@ def main():
                         (data['Avg. monthly searches'] >= search_volume_threshold) &
                         (data['Top of page bid (high range)'] >= bid_threshold)]
         
-            # Normalize the relevant columns
-            scaler = MinMaxScaler()
-            relevant_columns = ['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']
-            data[relevant_columns] = scaler.fit_transform(data[relevant_columns].fillna(0))
-        
             # Define weights for each factor (adjust as needed)
             weights = {
                 'Avg. monthly searches': 0.5,
@@ -376,7 +371,7 @@ def main():
                 'Top of page bid (high range)': 0.2
             }
         
-            # Calculate the combined score
+            # Calculate the combined score using the original (unscaled) values
             data['Score'] = (
                 data['Avg. monthly searches'] * weights['Avg. monthly searches'] +
                 data['Competition (indexed value)'] * weights['Competition (indexed value)'] +
