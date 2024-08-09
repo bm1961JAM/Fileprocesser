@@ -5,3 +5,4 @@ pandas
 PyPDF2
 bcrypt
 python-pptx
+scikit-learn
