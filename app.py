@@ -765,7 +765,7 @@ def main():
                         file_dict[file_to_offer] = os.path.join(root, file_to_offer)
 
             if file_dict:
-                st.success("Select a file from the dropdown menu to download!")
+                st.success("Select a file from the dropdown menu to download!")  # <-- Line with error
                 # Create a dropdown menu for file selection
                 selected_file = st.selectbox("Select a file to download", options=list(file_dict.keys()))
 
