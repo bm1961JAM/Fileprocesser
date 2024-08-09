@@ -11,6 +11,11 @@ import requests
 import bcrypt
 import base64
 from styles_and_html import get_page_bg_and_logo_styles
+import os
+import pandas as pd
+from zipfile import ZipFile
+from sklearn.preprocessing import MinMaxScaler
+import streamlit as st
 
 api_key = st.secrets["general"]["OPENAI_API_KEY"]
 if not api_key:
@@ -333,111 +338,58 @@ def main():
                         file_name=f"{company_name}_gpt_tasks.zip"
                     )
 
-    import os
-    import pandas as pd
-    from zipfile import ZipFile
-    from sklearn.preprocessing import MinMaxScaler
-    import streamlit as st
+   
     
-    def process_google_data(file_path, company_name):
-        # Define fixed thresholds
-        competition_threshold = 80
-        search_volume_threshold = 50
-        bid_threshold = 1
+
     
-        # Read the CSV file
-        data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
     
-        # Convert columns to numeric types and handle missing values
-        data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
-        data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
-        data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
-    
-        # Filter out highly competitive keywords and those not worth pursuing
-        data = data[(data['Competition (indexed value)'] <= competition_threshold) &
-                    (data['Avg. monthly searches'] >= search_volume_threshold) &
-                    (data['Top of page bid (high range)'] >= bid_threshold)]
-    
-        # Normalize the relevant columns
-        scaler = MinMaxScaler()
-        relevant_columns = ['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']
-        data[relevant_columns] = scaler.fit_transform(data[relevant_columns].fillna(0))
-    
-        # Define weights for each factor (adjust as needed)
-        weights = {
-            'Avg. monthly searches': 0.5,
-            'Competition (indexed value)': 0.3,
-            'Top of page bid (high range)': 0.2
-        }
-    
-        # Calculate the combined score
-        data['Score'] = (
-            data['Avg. monthly searches'] * weights['Avg. monthly searches'] +
-            data['Competition (indexed value)'] * weights['Competition (indexed value)'] +
-            data['Top of page bid (high range)'] * weights['Top of page bid (high range)']
-        )
-    
-        # Sort the keywords by the combined score in descending order
-        sorted_keywords = data.sort_values(by='Score', ascending=False)
-    
-        # Select the top 50 keywords
-        top_keywords = sorted_keywords.head(50)
-    
-        return top_keywords
-    
-    import os
-    import pandas as pd
-    from zipfile import ZipFile
-    from sklearn.preprocessing import MinMaxScaler
-    import streamlit as st
-    
-    def process_google_data(file_path, company_name):
-        # Define fixed thresholds
-        competition_threshold = 80
-        search_volume_threshold = 50
-        bid_threshold = 1
-    
-        # Read the CSV file
-        data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
-    
-        # Convert columns to numeric types and handle missing values
-        data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
-        data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
-        data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
-    
-        # Filter out highly competitive keywords and those not worth pursuing
-        data = data[(data['Competition (indexed value)'] <= competition_threshold) &
-                    (data['Avg. monthly searches'] >= search_volume_threshold) &
-                    (data['Top of page bid (high range)'] >= bid_threshold)]
-    
-        # Normalize the relevant columns
-        scaler = MinMaxScaler()
-        relevant_columns = ['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']
-        data[relevant_columns] = scaler.fit_transform(data[relevant_columns].fillna(0))
-    
-        # Define weights for each factor (adjust as needed)
-        weights = {
-            'Avg. monthly searches': 0.5,
-            'Competition (indexed value)': 0.3,
-            'Top of page bid (high range)': 0.2
-        }
-    
-        # Calculate the combined score
-        data['Score'] = (
-            data['Avg. monthly searches'] * weights['Avg. monthly searches'] +
-            data['Competition (indexed value)'] * weights['Competition (indexed value)'] +
-            data['Top of page bid (high range)'] * weights['Top of page bid (high range)']
-        )
-    
-        # Sort the keywords by the combined score in descending order
-        sorted_keywords = data.sort_values(by='Score', ascending=False)
-    
-        # Select the top 50 keywords
-        top_keywords = sorted_keywords.head(50)
-    
-        return top_keywords
     
     with tab3:
+        def process_google_data(file_path, company_name):
+        # Define fixed thresholds
+        competition_threshold = 80
+        search_volume_threshold = 50
+        bid_threshold = 1
+    
+        # Read the CSV file
+        data = pd.read_csv(file_path, encoding='utf-16', delimiter='\t', skiprows=2)
+    
+        # Convert columns to numeric types and handle missing values
+        data['Avg. monthly searches'] = pd.to_numeric(data['Avg. monthly searches'], errors='coerce').fillna(0)
+        data['Competition (indexed value)'] = pd.to_numeric(data['Competition (indexed value)'], errors='coerce').fillna(100)
+        data['Top of page bid (high range)'] = pd.to_numeric(data['Top of page bid (high range)'], errors='coerce').fillna(0)
+    
+        # Filter out highly competitive keywords and those not worth pursuing
+        data = data[(data['Competition (indexed value)'] <= competition_threshold) &
+                    (data['Avg. monthly searches'] >= search_volume_threshold) &
+                    (data['Top of page bid (high range)'] >= bid_threshold)]
+    
+        # Normalize the relevant columns
+        scaler = MinMaxScaler()
+        relevant_columns = ['Avg. monthly searches', 'Competition (indexed value)', 'Top of page bid (high range)']
+        data[relevant_columns] = scaler.fit_transform(data[relevant_columns].fillna(0))
+    
+        # Define weights for each factor (adjust as needed)
+        weights = {
+            'Avg. monthly searches': 0.5,
+            'Competition (indexed value)': 0.3,
+            'Top of page bid (high range)': 0.2
+        }
+    
+        # Calculate the combined score
+        data['Score'] = (
+            data['Avg. monthly searches'] * weights['Avg. monthly searches'] +
+            data['Competition (indexed value)'] * weights['Competition (indexed value)'] +
+            data['Top of page bid (high range)'] * weights['Top of page bid (high range)']
+        )
+    
+        # Sort the keywords by the combined score in descending order
+        sorted_keywords = data.sort_values(by='Score', ascending=False)
+    
+        # Select the top 50 keywords
+        top_keywords = sorted_keywords.head(50)
+    
+        return top_keywords
         st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
         st.markdown("""
             <p style='color:black;'>In this step, you need to upload CSV files for processing and analysis. The system will analyze the CSV files and generate a list of top 150 keywords based on various criteria.</p>
