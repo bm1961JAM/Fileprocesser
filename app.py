@@ -382,7 +382,7 @@ def main():
             sorted_keywords = data.sort_values(by='Score', ascending=False)
         
             # Select the top 50 keywords
-            top_keywords = sorted_keywords.head(150)
+            top_keywords = sorted_keywords.head(150)['Keyword']
         
             return top_keywords
         st.markdown("<h1 style='color:white;'>Step 3: Process and Analyze CSV Files</h1>", unsafe_allow_html=True)
