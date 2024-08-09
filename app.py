@@ -392,7 +392,7 @@ def main():
             sorted_keywords = data.sort_values(by='Score', ascending=False)
         
             # Select the top 150 keywords
-            top_keywords = sorted_keywords.head(150)['Keyword']
+            top_keywords = sorted_keywords.head(150)
         
             return top_keywords
 
@@ -438,7 +438,7 @@ def main():
                         # Save the final results to a new CSV file
                         final_output_file = os.path.join("processed", f"{company_name}_top_150_keywords.csv")
                         os.makedirs("processed", exist_ok=True)
-                        final_top_keywords.to_csv(final_output_file, index=False)
+                        final_top_keywords['Keyword'].to_csv(final_output_file, index=False)
     
                         st.success("CSV files processed and top 150 keywords saved!")
                     else:
