@@ -416,7 +416,7 @@ def main():
                         for file_path in csv_file_paths:
                             top_keywords = process_google_data(file_path, company_name)
                             top_keywords['Source'] = file_path
-                            all_top_keywords = all_top_keywords.append(top_keywords, ignore_index=True)
+                            all_top_keywords = pd.concat([all_top_keywords, top_keywords], ignore_index=True)
     
                         # Sort all keywords by score
                         all_top_keywords = all_top_keywords.sort_values(by='Score', ascending=False)
@@ -425,7 +425,7 @@ def main():
                         final_top_keywords = pd.DataFrame()
                         for source in all_top_keywords['Source'].unique():
                             source_keywords = all_top_keywords[all_top_keywords['Source'] == source]
-                            final_top_keywords = final_top_keywords.append(source_keywords.head(35), ignore_index=True)
+                            final_top_keywords = pd.concat([final_top_keywords, source_keywords.head(35)], ignore_index=True)
     
                         final_top_keywords = final_top_keywords.head(150)
     
